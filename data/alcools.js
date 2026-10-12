@@ -39,7 +39,7 @@ window.ALCOOLS = [
 {
   s: "vermouth", n: "Vermouth", titre: "Le Vermouth", famille: "Apéritif à base de vin", img: "vermouth.png",
   intro: "Le vermouth est un vin aromatisé par une macération de plantes et d’épices, puis fortifié par l’ajout de mistelle ; il titre entre 14,5 et 22 % vol.",
-  id: [["Famille", "Apéritif à base de vin (A.B.V.)"], ["Base", "Vin blanc de Sète ou de Chambéry"], ["Épices", "Quinquina, clou de girofle, gentiane, absinthe, écorces d’orange, gingembre, cannelle"], ["Origine", "Italie (Turin)"], ["Degré", "14,5 à 22 % vol."], ["Marques", "Martini, Vermouth Routin de Chambéry"]],
+  id: [["Famille", "Apéritif à base de vin (A.B.V.)"], ["Base", "Vin blanc de Sète ou de Chambéry"], ["Épices", "Quinquina, clou de girofle, gentiane, absinthe, écorces d’orange, gingembre, cannelle"], ["Origine", "Italie (Turin)"], ["Degré", "14,5 à 22 % vol."], ["Marques commerciales", "Martini, Vermouth Routin de Chambéry"]],
   sec: [
     { t: "Composition", table: [["Ingrédient", "Part"], ["Vin blanc", "75 %"], ["Alcool neutre ou mistelle", "11 %"], ["Plantes et épices", "9 %"], ["Sucre", "4 %"], ["Caramel (colore le vermouth rouge)", "1 %"]] },
     { t: "La mistelle", text: "La mistelle est un jus de raisin frais mélangé à un alcool neutre." }
@@ -48,7 +48,7 @@ window.ALCOOLS = [
 {
   s: "champagne", n: "Champagne", titre: "Le Champagne", famille: "Vins effervescents", img: "champagne.png",
   intro: "Le champagne est un vin effervescent d’appellation d’origine contrôlée, produit uniquement en Champagne, dont les bulles naissent d’une seconde fermentation en bouteille.",
-  id: [["Famille", "Vin effervescent (AOC Champagne)"], ["Cépages", "Chardonnay, pinot noir, pinot meunier"], ["Origine", "Champagne (Reims, Épernay)"], ["Degré", "Environ 12 % vol."], ["Marque", "Veuve Clicquot"]],
+  id: [["Famille", "Vin effervescent (AOC Champagne)"], ["Cépages", "Chardonnay, pinot noir, pinot meunier"], ["Origine", "Champagne (Reims, Épernay)"], ["Degré", "Environ 12 % vol."], ["Marque commerciale", "Veuve Clicquot"]],
   sec: [
     { t: "Fabrication : la méthode traditionnelle", steps: ["On élabore un vin tranquille, souvent par assemblage de cépages et d’années.", "On le met en bouteille avec du sucre et des levures (liqueur de tirage).", "Une seconde fermentation en bouteille produit le gaz carbonique : la prise de mousse.", "Vieillissement sur lies, remuage, puis dégorgement pour retirer le dépôt.", "On ajoute la liqueur d’expédition, qui fixe le dosage en sucre (brut, extra-brut, demi-sec…)."] },
     { t: "Les autres vins effervescents", text: "Le Socle accepte aussi le prosecco (Italie), à privilégier pour le Spritz et le Negroni Sbagliato." }
@@ -57,7 +57,7 @@ window.ALCOOLS = [
 {
   s: "tequila", n: "Tequila", titre: "La Tequila", famille: "Eau-de-vie d’agave", img: "tequila.png",
   intro: "La tequila est une eau-de-vie de plante, tirée de l’agave, et produite exclusivement au Mexique.",
-  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "L’agave bleu (aussi appelé maguey) ; on utilise son cœur, la piña"], ["Origine", "Mexique, exclusivement"], ["Degré", "35 à 40 % vol."], ["Marques", "Olmeca, San José"]],
+  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "L’agave bleu (aussi appelé maguey) ; on utilise son cœur, la piña"], ["Origine", "Mexique, exclusivement"], ["Degré", "35 à 40 % vol."], ["Marques commerciales", "Olmeca, San José"]],
   sec: [
     { t: "Fabrication", steps: ["Le cœur de l’agave (piña) est cuit, puis broyé : il libère des sucres fermentescibles.", "<b>Fermentation</b> : les levures mangent ces sucres et produisent un alcool à 6-8 % vol.", "<b>Distillation</b> en alambic.", "<b>Vieillissement</b> en fût de chêne, ou pas : quelques mois, voire quelques années."] },
     { t: "Tequila blanche ou ambrée ?", text: "Certaines tequilas vieillissent en fût de chêne, ce qui leur donne une couleur ambrée. La tequila blanche (blanco) n’est pas vieillie." }
@@ -86,7 +86,7 @@ window.ALCOOLS = [
 {
   s: "cachaca", n: "Cachaça", titre: "La Cachaça", famille: "Eau-de-vie de canne à sucre", img: "cachaca.png",
   intro: "La cachaça est l’eau-de-vie nationale du Brésil, distillée à partir de jus de canne à sucre frais, comme le rhum agricole.",
-  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "Jus de canne à sucre frais"], ["Origine", "Brésil, exclusivement"], ["Degré", "38 à 48 % vol."], ["Marque", "Thoquino"]],
+  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "Jus de canne à sucre frais"], ["Origine", "Brésil, exclusivement"], ["Degré", "38 à 48 % vol."], ["Marque commerciale", "Thoquino"]],
   sec: [
     { t: "Fabrication", steps: ["Le jus de canne frais est fermenté par des levures.", "Distillation, le plus souvent en alambic.", "Embouteillée blanche, ou vieillie en fût de bois."] },
     { t: "Cachaça ou rhum agricole ?", text: "Les deux partent du jus de canne frais : la cachaça se distingue par son origine (Brésil) et sa réglementation propre." }
@@ -95,7 +95,7 @@ window.ALCOOLS = [
 {
   s: "xeres", n: "Xérès", titre: "Le Xérès", famille: "Vin de liqueur", img: "xeres.png",
   intro: "Le xérès (sherry) est un vin de liqueur espagnol : un vin dont on a arrêté la fermentation par l’ajout d’une eau-de-vie, c’est le mutage.",
-  id: [["Famille", "Apéritif à base de vin (A.B.V.) — vin de liqueur (V.D.L.)"], ["Origine", "Espagne, région de Jerez en Andalousie"], ["Degré", "15 à 22 % vol."], ["Marque", "Drysack"]],
+  id: [["Famille", "Apéritif à base de vin (A.B.V.) — vin de liqueur (V.D.L.)"], ["Origine", "Espagne, région de Jerez en Andalousie"], ["Degré", "15 à 22 % vol."], ["Marque commerciale", "Drysack"]],
   sec: [
     { t: "Le mutage", steps: ["Les levures transforment le sucre du moût de raisin en alcool : c’est la fermentation alcoolique.", "On ajoute de l’alcool en début de fermentation : les levures s’arrêtent.", "On conserve ainsi une partie du sucre et on augmente le degré : on obtient un vin de liqueur."] },
     { t: "Les vins de liqueur vus en cours", list: ["Pineau des Charentes (muté au cognac)", "Floc de Gascogne (muté à l’armagnac)", "Macvin du Jura (muté au marc du Jura)", "Porto", "Xérès"] },
