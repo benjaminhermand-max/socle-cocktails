@@ -206,7 +206,7 @@
     return '<a class="card-cocktail" href="#/cocktail/' + c.s + (slug ? "?de=" + slug : "") + '">' +
       '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"></div>' +
       '<div class="body"><div><div class="meta"><span class="cat">' + c.c + '</span><span class="muted">TAV ' + c.tav + ' %</span></div>' +
-      "<h3>" + embleme(c.s, "e-carte") + "<span>" + esc(c.n) + '</span></h3><p class="profil">' + esc(c.p) + "</p></div>" +
+      "<h3>" + esc(c.n) + '</h3><p class="profil">' + esc(c.p) + "</p></div>" +
       '<ul class="ings">' + ings + "</ul>" +
       '<div class="chips">' + badge + '<span class="chip">' + METHODES[c.m] + '</span><span class="chip">Verre ' + VERRES[c.v] + "</span></div></div></a>";
   }
@@ -282,7 +282,7 @@
     var grid = document.getElementById("liste");
     function draw(f) {
       grid.innerHTML = sorted.filter(function (c) { return f === "Tous" || c.c === f; }).map(function (c) {
-        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy">' + embleme(c.s, "e-galerie") + "<span>" + esc(c.n) + "</span></a></li>";
+        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"><span>' + esc(c.n) + "</span></a></li>";
       }).join("");
     }
     draw("Tous");
