@@ -450,3 +450,23 @@ footer.site .signature span { display: inline-block; margin-top: 4px; letter-spa
 .tb-table { width: 100%; border-collapse: collapse; font-size: 1.02em; }
 .tb-table th { text-align: left; font-size: .8em; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-ink); padding: .3em .5em .3em 0; border-bottom: 2px solid var(--gold); }
 .tb-table td { padding: .35em .5em .35em 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+
+/* Plein écran — Connaissances (contenu libre, mis à l'échelle par zoom) */
+.tb-savoir { display: block; overflow: hidden; padding: .4em 3em 1.6em; font-size: 16px; }
+.tb-zoom { width: 100%; }
+.tb-titre { margin: 0 0 .2em; font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; font-size: 64px; line-height: .95; }
+.tb-savoir .lead { margin: 6px 0 20px; color: var(--muted); font-size: 18px; }
+.tb-savoir .rules { grid-template-columns: repeat(4, 1fr); }
+.tb-savoir .glass-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 18px; }
+.tb-savoir .lexique { display: block; column-count: 3; column-gap: 0; }
+.tb-savoir .lexique > * { break-inside: avoid; }
+.tb-savoir .lex-search, .tb-savoir label[for="lx"] { display: none; }
+.tb-savoir .method { margin-bottom: 12px; }
+.tb-savoir .tb-zoom:has(.method) { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 16px; align-items: start; }
+.tb-savoir .tb-zoom:has(.method) > :not(.method) { grid-column: 1 / -1; }
+.tb-savoir .lexique { column-count: 4; border: 0; background: transparent; }
+.tb-savoir .lexique div { display: block; padding: 6px 12px; border-bottom: 1px solid var(--line-soft); }
+.tb-savoir .lexique dt { display: inline; }
+.tb-savoir .lexique dt::after { content: " — "; font-weight: 400; color: var(--muted); }
+.tb-savoir .lexique dd { display: inline; }
+.tb-savoir label[for="lx"] { display: none !important; }

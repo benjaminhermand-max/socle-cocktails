@@ -368,6 +368,16 @@
   function ajusterTableau() {
     if (!tableau) return;
     var page = tableau.querySelector(".tb-page");
+    if (optsTableau.zoom) {
+      // Contenu libre : on cherche le plus grand zoom qui tient sans défilement.
+      var z = page.querySelector(".tb-zoom"), lo = 0.35, hi = 2.2;
+      for (var k = 0; k < 14; k++) {
+        var mid = (lo + hi) / 2; z.style.zoom = mid;
+        if (page.scrollHeight <= page.clientHeight + 1 && page.scrollWidth <= page.clientWidth + 1) lo = mid; else hi = mid;
+      }
+      z.style.zoom = lo;
+      return;
+    }
     var u = Math.min(window.innerWidth / 92, window.innerHeight / 46);
     page.style.fontSize = u + "px";
     var cols = page.querySelectorAll(".tb-col");
@@ -384,6 +394,7 @@
     tableau.querySelector(".tb-page").className = "tb-page " + (optsTableau.classe || "");
     tableau.querySelector(".tb-page").innerHTML = optsTableau.rendu(item);
     optsTableau.courant = item;
+    if (optsTableau.apres) optsTableau.apres(item);
     ajusterTableau();
     Array.prototype.forEach.call(tableau.querySelectorAll("img"), function (im) { if (!im.complete) im.addEventListener("load", ajusterTableau, { once: true }); });
   }
@@ -455,6 +466,22 @@
     var menu = RUBRIQUES.map(function (x, i) {
       return '<li><a href="#/savoirs/' + x[0] + '"' + (x[0] === r[0] ? ' aria-current="page"' : "") + '><span class="n">0' + (i + 1) + "</span>" + x[1] + "</a></li>";
     }).join("");
+    var html = htmlSavoir(r);
+    app.innerHTML = '<div class="wrap"><div class="savoirs"><aside><p class="eyebrow">Connaissances</p><nav aria-label="Rubriques"><ul>' + menu + '</ul></nav></aside>' +
+      '<div class="content"><h1 class="display">' + r[1] + "</h1>" + html +
+      '<p><button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></p></div></div></div>";
+    if (r[0] === "tav") initCalc();
+    if (r[0] === "lexique") initLexique();
+    document.getElementById("btnTableau").addEventListener("click", function () {
+      app.innerHTML = "";
+      ouvrirTableau({ liste: RUBRIQUES, courant: r, classe: "tb-savoir", aide: "← → changer de rubrique", zoom: true,
+        rendu: function (x) { return '<div class="tb-zoom"><p class="tb-eyebrow">Connaissances</p><h2 class="tb-titre">' + x[1] + "</h2>" + htmlSavoir(x) + "</div>"; },
+        apres: function (x) { if (x[0] === "tav") initCalc(); if (x[0] === "lexique") initLexique(); },
+        hash: function (x) { return "#/savoirs/" + x[0]; } });
+    });
+  }
+
+  function htmlSavoir(r) {
     var html = "";
     switch (r[0]) {
       case "pratiques":
@@ -509,10 +536,7 @@
           '<dl class="lexique" id="lexl"></dl>';
         break;
     }
-    app.innerHTML = '<div class="wrap"><div class="savoirs"><aside><p class="eyebrow">Connaissances</p><nav aria-label="Rubriques"><ul>' + menu + '</ul></nav></aside>' +
-      '<div class="content"><h1 class="display">' + r[1] + "</h1>" + html + "</div></div></div>";
-    if (r[0] === "tav") initCalc();
-    if (r[0] === "lexique") initLexique();
+    return html;
   }
 
   function initCalc() {
