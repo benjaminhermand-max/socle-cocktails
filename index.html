@@ -5,8 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Socle des Cocktails — Lycée Ambroise Croizat</title>
   <meta name="description" content="Les 36 cocktails du Socle des Cocktails de Référence : présentation des alcools, fiches techniques, verrerie, matériel et lexique du barman.">
-  <meta name="theme-color" content="#FAF8F4">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A017' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16l-8 9z'/%3E%3Cpath d='M12 13v7'/%3E%3Cpath d='M8 20h8'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#1D1B18">
+  <link rel="icon" href="img/icone/icone.svg" type="image/svg+xml">
+  <link rel="icon" href="img/icone/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="img/icone/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cocktails">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,7 +23,7 @@
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="#/">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4A017" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16l-8 9z"/><path d="M12 13v7"/><path d="M8 20h8"/></svg>
+        <svg width="30" height="30" viewBox="0 0 512 512" aria-hidden="true"><path d="M136 152 H376 L256 286 Z" fill="#D4A017" opacity="0.22"/><line x1="196" y1="244" x2="334" y2="104" stroke="#5F5A52" stroke-width="16" stroke-linecap="round"/><circle cx="336" cy="102" r="16" fill="#5F5A52"/><ellipse cx="222" cy="218" rx="40" ry="33" transform="rotate(-45 222 218)" fill="#7A9A2E"/><circle cx="236" cy="228" r="11" fill="#B5462E"/><path d="M110 136 H402 L256 300 Z" fill="none" stroke="#D4A017" stroke-width="28" stroke-linejoin="round"/><line x1="256" y1="300" x2="256" y2="404" stroke="#D4A017" stroke-width="28" stroke-linecap="round"/><line x1="190" y1="410" x2="322" y2="410" stroke="#D4A017" stroke-width="28" stroke-linecap="round"/></svg>
         <span>Socle des Cocktails</span>
       </a>
       <nav class="nav" aria-label="Navigation principale">
@@ -37,5 +44,6 @@
   <script src="data/alcools.js"></script>
   <script src="data/savoirs.js"></script>
   <script src="app.js"></script>
+  <script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js"); }); }</script>
 </body>
 </html>

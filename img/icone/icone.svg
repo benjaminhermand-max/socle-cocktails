@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1D1B18"/>
+  <!-- liquide -->
+  <path d="M136 152 H376 L256 286 Z" fill="#D4A017" opacity="0.22"/>
+  <!-- pic -->
+  <line x1="196" y1="244" x2="334" y2="104" stroke="#E8E2D6" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="336" cy="102" r="13" fill="#E8E2D6"/>
+  <!-- olive -->
+  <ellipse cx="222" cy="218" rx="36" ry="30" transform="rotate(-45 222 218)" fill="#7A9A2E"/>
+  <ellipse cx="214" cy="208" rx="11" ry="8" transform="rotate(-45 214 208)" fill="#A9C454"/>
+  <circle cx="236" cy="228" r="9" fill="#B5462E"/>
+  <!-- verre -->
+  <path d="M110 136 H402 L256 300 Z" fill="none" stroke="#D4A017" stroke-width="20" stroke-linejoin="round"/>
+  <line x1="256" y1="300" x2="256" y2="404" stroke="#D4A017" stroke-width="20" stroke-linecap="round"/>
+  <line x1="190" y1="410" x2="322" y2="410" stroke="#D4A017" stroke-width="20" stroke-linecap="round"/>
+</svg>
