@@ -98,14 +98,14 @@ window.ALCOOLS = [
   id: [["Famille", "Apéritif à base de vin (A.B.V.) — vin de liqueur (V.D.L.)"], ["Origine", "Espagne, région de Jerez en Andalousie"], ["Degré", "15 à 22 % vol."], ["Marque commerciale", "Drysack"]],
   sec: [
     { t: "Le mutage", steps: ["Les levures transforment le sucre du moût de raisin en alcool : c’est la fermentation alcoolique.", "On ajoute de l’alcool en début de fermentation : les levures s’arrêtent.", "On conserve ainsi une partie du sucre et on augmente le degré : on obtient un vin de liqueur."] },
-    { t: "Les vins de liqueur vus en cours", list: ["Pineau des Charentes (muté au cognac)", "Floc de Gascogne (muté à l’armagnac)", "Macvin du Jura (muté au marc du Jura)", "Porto", "Xérès"] },
+    { t: "Les principaux vins de liqueur", list: ["Pineau des Charentes (muté au cognac)", "Floc de Gascogne (muté à l’armagnac)", "Macvin du Jura (muté au marc du Jura)", "Porto", "Xérès"] },
     { t: "Fino, medium…", text: "Le Socle demande un xérès <b>fino</b>, le plus sec et le plus clair. Le Drysack illustre la famille, mais c’est un medium, plus doux." }
   ]
 },
 {
   s: "liqueurs", n: "Liqueurs & crèmes", titre: "Les Liqueurs et les crèmes", famille: "Triple sec, maraschino, café…", img: "liqueurs.png",
   intro: "Les liqueurs et les crèmes sont des spiritueux sucrés, élaborés à partir d’alcool et de plantes, de fruits ou d’épices ; dans les cocktails, elles apportent le « sweet » de la règle des 3 S.",
-  id: [["Liqueurs", "Spiritueux sucrés à base d’alcool, de plantes, de fruits ou d’épices — au moins 100 g de sucre par litre"], ["Crèmes", "Liqueurs plus sucrées, à base d’alcool neutre ou de fruits, à la texture onctueuse — au moins 250 g de sucre par litre"], ["Liqueurs vues en cours", "Cointreau, Grand Marnier, Mandarine Impériale, Izarra, Kahlua, Disaronno, Get 27, Manzana"], ["Crèmes vues en cours", "Crème de cassis L’Héritier-Guyot et Cartron, liqueurs Marie Brizard"]],
+  id: [["Liqueurs", "Spiritueux sucrés à base d’alcool, de plantes, de fruits ou d’épices — au moins 100 g de sucre par litre"], ["Crèmes", "Liqueurs plus sucrées, à base d’alcool neutre ou de fruits, à la texture onctueuse — au moins 250 g de sucre par litre"], ["Marques commerciales (liqueurs)", "Cointreau, Grand Marnier, Mandarine Impériale, Izarra, Kahlua, Disaronno, Get 27, Manzana"], ["Marques commerciales (crèmes)", "Crème de cassis L’Héritier-Guyot et Cartron, liqueurs Marie Brizard"]],
   sec: [
     { t: "Les liqueurs et crèmes du Socle", table: [["Produit", "Arôme", "Cocktails"], ["Triple sec (Cointreau)", "Écorces d’orange", "Cosmopolitan, Margarita, Sidecar"], ["Curaçao orange", "Écorces d’orange", "Mai Tai"], ["Maraschino", "Cerise marasque", "Aviation"], ["Crème de violette", "Violette", "Aviation"], ["Crème de mûre", "Mûre", "Bramble"], ["Liqueur de café", "Café", "Espresso Martini"], ["Liqueur de fruit de la passion", "Fruit de la passion", "Pornstar Martini"], ["Liqueur de pêche", "Pêche", "Sex on the Beach"], ["Velvet falernum", "Citron vert, gingembre, clou de girofle", "Rum Swizzle"]] }
   ]
