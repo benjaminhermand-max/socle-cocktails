@@ -354,3 +354,6 @@ a.ck:hover { color: var(--gold-ink); }
 .hero h1 { font-size: clamp(46px, 5vw, 70px); line-height: 0.95; }
 .hero p.lead { margin-top: 16px; }
 .hero .wrap { padding-bottom: 40px; }
+
+/* Aquarelles des cocktails : fond blanc fondu dans le fond de la carte */
+.card-cocktail .pic img, .results img, .fiche-hero .pic img { mix-blend-mode: multiply; object-fit: contain; }
