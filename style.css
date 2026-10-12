@@ -331,3 +331,11 @@ a.ck:hover { color: var(--gold-ink); }
   .topbar { position: static; }
   .topbar .search .bubble input { font-size: 16px; }
 }
+
+/* Bandeau ordinateur : recherche plus étroite, centrée sous le nom */
+@media (min-width: 761px) {
+  .topbar .wrap { grid-template-columns: 400px 1fr; }
+  .topbar .brand { justify-self: center; }
+  .topbar .search { width: 400px; }
+  .topbar .search .bubble input { font-size: 14px; text-overflow: clip; }
+}
