@@ -322,7 +322,7 @@
     app.innerHTML =
       '<div class="wrap">' + back +
       '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display titre-embleme">' + embleme(c.s, "e-fiche") + "<span>" + esc(c.n) + '</span></h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p>" +
-        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Présenter au tableau</button></div>" +
+        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
         '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="Illustration du cocktail ' + esc(c.n) + '"></div></section>' +
       '<div class="fiche-grid"><section class="block recette"><h2 class="h2">Recette</h2><ul>' + recette + "</ul>" +
         '<p class="order-note">Ingrédients dans l’ordre de la recette : du moins cher au plus cher.</p></section>' +
@@ -367,6 +367,10 @@
     function deborde() { for (var i = 0; i < cols.length; i++) if (cols[i].scrollHeight > cols[i].clientHeight + 1) return true; return false; }
     var n = 0;
     while (deborde() && n++ < 40) { u *= 0.95; page.style.fontSize = u + "px"; }
+    // Le nom ne doit jamais être coupé : on réduit sa taille s'il dépasse la colonne.
+    var nom = page.querySelector(".tb-nom"), col = page.querySelector(".tb-c1"), t = 4.6;
+    nom.style.fontSize = t + "em";
+    while (nom.scrollWidth > col.clientWidth + 1 && t > 2) { t -= 0.1; nom.style.fontSize = t + "em"; }
   }
   function afficherTableau(c) {
     tableau.querySelector(".tb-page").innerHTML = contenuTableau(c);
@@ -400,9 +404,9 @@
     tableau = document.createElement("div");
     tableau.className = "tableau";
     tableau.setAttribute("role", "dialog");
-    tableau.setAttribute("aria-label", "Présentation au tableau");
+    tableau.setAttribute("aria-label", "Fiche en plein écran");
     tableau.innerHTML = '<div class="tb-barre"><span>← → changer de cocktail · Échap pour quitter</span>' +
-      '<button type="button" class="tb-fermer" aria-label="Quitter le mode tableau">✕</button></div><div class="tb-page"></div>';
+      '<button type="button" class="tb-fermer" aria-label="Quitter le plein écran">✕</button></div><div class="tb-page"></div>';
     document.body.appendChild(tableau);
     tableau.querySelector(".tb-fermer").addEventListener("click", fermerTableau);
     document.addEventListener("keydown", toucheTableau);
