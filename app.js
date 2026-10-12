@@ -102,8 +102,8 @@
     app.innerHTML =
       '<section class="hero"><div class="wrap">' +
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
-        '<h1 class="display">Choisis ton alcool.<br><span>Découvre ses cocktails.</span></h1>' +
-        '<p class="lead">Chaque alcool a sa présentation pour le comprendre, puis la liste des cocktails du Socle où il est utilisé, jusqu’à la fiche technique complète.</p>' +
+        '<h1 class="display">L’art du cocktail.<br><span>De l’alcool à la fiche technique.</span></h1>' +
+        '<p class="lead">Comprendre chaque spiritueux, connaître ses grands classiques et les réaliser dans les règles : le Socle des cocktails de référence, version élève.</p>' +
         '<form class="search" role="search" id="fq"><label for="q" class="sr-only">Rechercher un cocktail, un ingrédient, une méthode d’élaboration</label>' +
         '<div class="bubble"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
         '<input id="q" type="search" autocomplete="off" placeholder="Rechercher : cocktails, ingrédients…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
