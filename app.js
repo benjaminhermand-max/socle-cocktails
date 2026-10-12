@@ -104,9 +104,9 @@
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
         '<h1 class="display">Choisis ton alcool.<br><span>Découvre ses cocktails.</span></h1>' +
         '<p class="lead">Chaque alcool a sa présentation pour le comprendre, puis la liste des cocktails du Socle où il est utilisé, jusqu’à la fiche technique complète.</p>' +
-        '<form class="search" role="search" id="fq"><label for="q">Trouver un cocktail</label>' +
+        '<form class="search" role="search" id="fq"><label for="q">Trouver un cocktail, un ingrédient, une méthode d’élaboration…</label>' +
         '<div class="bubble"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
-        '<input id="q" type="search" autocomplete="off" placeholder="Tape un cocktail : Mojito, Negroni…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
+        '<input id="q" type="search" autocomplete="off" placeholder="Mojito, menthe, shaker…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
         '<button type="submit">Voir la fiche</button></div>' +
         '<ul class="results" id="res" role="listbox" hidden></ul><p class="search-hint muted" id="qh" aria-live="polite"></p></form></div>' +
         '<div class="hero-media"><video src="img/accueil/accueil.mp4" poster="img/accueil/poster.jpg" autoplay muted loop playsinline aria-label="Aquarelle animée d’un comptoir de bar avec un Negroni, un Dry Martini, un French 75 et un Mojito"></video></div>' +
@@ -131,6 +131,7 @@
       else if (n.split(/[\s’-]/).some(function (w) { return w.indexOf(v) === 0; })) score = 2;
       else if (n.indexOf(v) !== -1) score = 3;
       else if (v.length >= 3 && norm(c.ing.map(function (i) { return i[1]; }).join(" ")).indexOf(v) !== -1) score = 4;
+      else if (v.length >= 3 && norm(METHODES[c.m] + " " + (c.m === "melange" ? "melange stir" : c.m === "shaker" ? "frapper" : "direct au verre build") + " verre " + VERRES[c.v] + " " + c.c + " " + c.t + " " + c.g).indexOf(v) !== -1) score = 5;
       if (score >= 0) res.push([score, c]);
     });
     return res.sort(function (a, b) { return a[0] - b[0] || a[1].n.localeCompare(b[1].n, "fr"); }).map(function (x) { return x[1]; });
@@ -142,14 +143,20 @@
     var hits = [], cur = -1;
     function close() { res.hidden = true; q.setAttribute("aria-expanded", "false"); cur = -1; }
     function show() {
-      hits = chercher(q.value).slice(0, 8);
+      hits = chercher(q.value);
       hint.textContent = "";
       if (!q.value.trim()) { res.innerHTML = ""; close(); return; }
       res.innerHTML = hits.length ? hits.map(function (c, i) {
-        var viaIng = norm(c.n).indexOf(norm(q.value.trim())) === -1;
+        var v = norm(q.value.trim());
+        var viaNom = norm(c.n).indexOf(v) !== -1;
+        var ing = c.ing.filter(function (x) { return norm(x[1]).indexOf(v) !== -1; })[0];
+        var info = viaNom ? c.c + " · " + METHODES[c.m] + " · Verre " + VERRES[c.v]
+                 : ing ? "Contient : " + ing[0] + " " + ing[1].toLowerCase()
+                 : METHODES[c.m] + " · Verre " + VERRES[c.v] + " · " + c.c;
         return '<li role="option" id="opt' + i + '"><a href="#/cocktail/' + c.s + '"><img src="img/cocktails/' + c.s + '.jpg" alt=""><span><b>' + esc(c.n) + '</b><small>' +
-          esc(viaIng ? "Contient : " + q.value.trim() : c.c + " · " + METHODES[c.m]) + '</small></span></a></li>';
+          esc(info) + '</small></span></a></li>';
       }).join("") : '<li class="muted" style="padding:10px 12px">Aucun cocktail trouvé. Vérifie l’orthographe.</li>';
+      if (hits.length > 1) res.insertAdjacentHTML("afterbegin", '<li class="res-count" aria-hidden="true">' + hits.length + ' cocktails</li>');
       res.hidden = false; q.setAttribute("aria-expanded", "true"); cur = -1;
     }
     function mark() {
@@ -421,4 +428,15 @@
   }
   window.addEventListener("hashchange", route);
   route();
+
+  /* ---------- Retour en haut ---------- */
+  var haut = document.getElementById("haut");
+  function majHaut() { haut.classList.toggle("visible", window.scrollY > 500); }
+  window.addEventListener("scroll", majHaut, { passive: true });
+  haut.addEventListener("click", function () {
+    var reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduit ? "auto" : "smooth" });
+    var h1 = app.querySelector("h1"); if (h1) h1.focus({ preventScroll: true });
+  });
+  majHaut();
 })();
