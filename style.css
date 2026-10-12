@@ -470,3 +470,20 @@ footer.site .signature span { display: inline-block; margin-top: 4px; letter-spa
 .tb-savoir .lexique dt::after { content: " — "; font-weight: 400; color: var(--muted); }
 .tb-savoir .lexique dd { display: inline; }
 .tb-savoir label[for="lx"] { display: none !important; }
+
+/* Autres apéritifs & digestifs */
+.lead-autres { color: var(--muted); font-size: 18px; max-width: 640px; margin: 12px 0 8px; }
+.autres-groupe { margin-top: 36px; }
+.autres-groupe h2 { font-size: 40px; margin: 0; }
+.autres-groupe > p { margin: 4px 0 16px; }
+.autres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.carte-autre { display: flex; align-items: center; gap: 16px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 18px; text-decoration: none; color: var(--dark); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.carte-autre:hover, .carte-autre:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(29,27,24,.08); border-color: var(--gold); }
+.carte-autre b { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; letter-spacing: .5px; }
+.carte-autre small { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+.e-autre { width: 64px; height: 64px; }
+.e-autre-grand { width: 120px; height: 120px; border-width: 3px; margin-left: 8px; }
+.alc-title.titre-embleme { align-items: center; }
+.e-tb-grand { width: 70%; max-width: 15em; aspect-ratio: 1; height: auto; border-width: .2em; }
+@media (prefers-reduced-motion: reduce) { .carte-autre { transition: none; } .carte-autre:hover { transform: none; } }
+@media (max-width: 520px) { .e-autre-grand { width: 72px; height: 72px; } }

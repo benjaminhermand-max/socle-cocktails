@@ -22,6 +22,8 @@
     var list = C.filter(function (c) { return c.al.indexOf(slug) !== -1; });
     return list.filter(function (c) { return c.base === slug; }).concat(list.filter(function (c) { return c.base !== slug; }));
   }
+  var AU = window.AUTRES || [];
+  function autre(slug) { for (var i = 0; i < AU.length; i++) if (AU[i].s === slug) return AU[i]; return null; }
   function alcool(slug) { for (var i = 0; i < A.length; i++) if (A[i].s === slug) return A[i]; return null; }
   function cocktail(slug) { for (var i = 0; i < C.length; i++) if (C[i].s === slug) return C[i]; return null; }
 
@@ -250,6 +252,41 @@
     });
   }
 
+  /* ---------- Autres apéritifs & digestifs ---------- */
+  function viewAutres() {
+    setNav("alcools");
+    document.title = "Autres apéritifs & digestifs — Socle des Cocktails";
+    function bloc(g, titre, texte) {
+      return '<section class="autres-groupe"><h2 class="display">' + titre + '</h2><p class="muted">' + texte + '</p><div class="autres-grid">' +
+        AU.filter(function (x) { return x.groupe === g; }).map(function (x) {
+          return '<a class="carte-autre" href="#/autre/' + x.s + '">' + embleme("x-" + x.s, "e-autre") + "<span><b>" + esc(x.n) + "</b><small>" + esc(x.famille) + "</small></span></a>";
+        }).join("") + "</div></section>";
+    }
+    app.innerHTML = '<div class="wrap section"><p class="eyebrow">Hors Socle</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Autres apéritifs & digestifs</h1>' +
+      '<p class="lead-autres">Les autres familles vues en culture professionnelle, en complément des alcools du Socle.</p>' +
+      bloc("aperitif", "Les apéritifs", "Servis avant le repas : apéritifs à base de vin (A.B.V.) et à base d’alcool (A.B.A.).") +
+      bloc("digestif", "Les digestifs", "Servis en fin de repas : les eaux-de-vie.") + "</div>";
+  }
+  function viewAutre(slug) {
+    var a = autre(slug);
+    if (!a) return viewIntrouvable();
+    setNav("alcools");
+    document.title = a.titre + " — Socle des Cocktails";
+    var id = a.id.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("");
+    app.innerHTML =
+      '<div class="wrap"><a class="back" href="#/autres">' + ICON_BACK + "Autres apéritifs & digestifs</a>" +
+      '<div class="alc-hero"><div class="alc-main"><p class="eyebrow">' + esc(a.famille) + "</p>" +
+        '<div class="alc-title titre-embleme"><h1 class="display">' + esc(a.titre) + "</h1>" + embleme("x-" + a.s, "e-autre-grand") + "</div>" +
+        '<p class="intro">' + a.intro + "</p>" +
+        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
+        '<aside class="id-card"><h2 class="display">Carte d’identité</h2><dl>' + id + "</dl></aside></div>" +
+      '<div class="sections">' + a.sec.map(renderSection).join("") + "</div></div>";
+    document.getElementById("btnTableau").addEventListener("click", function () {
+      ouvrirTableau({ liste: AU, courant: a, rendu: contenuTableauAlcool, classe: "tb-alcool", aide: "← → changer d’alcool",
+        hash: function (x) { return "#/autre/" + x.s; } });
+    });
+  }
+
   /* ---------- Tous les cocktails ---------- */
   function viewCocktails() {
     setNav("cocktails");
@@ -436,7 +473,7 @@
   /* Plein écran d'un alcool */
   function contenuTableauAlcool(a) {
     var id = a.id.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("");
-    var cks = cocktailsDe(a.s).map(function (c) { return "<li>" + esc(c.n) + "</li>"; }).join("");
+    var cks = (a.img ? cocktailsDe(a.s) : []).map(function (c) { return "<li>" + esc(c.n) + "</li>"; }).join("");
     var secs = a.sec.map(function (sec) {
       var body = "";
       if (sec.steps) body = '<ol class="tb-tech">' + sec.steps.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ol>";
@@ -449,7 +486,7 @@
     return '<div class="tb-col tb-c1">' +
         '<p class="tb-eyebrow">' + esc(a.famille) + "</p>" +
         '<h2 class="tb-nom"><span>' + esc(a.titre) + "</span></h2>" +
-        '<div class="tb-pic tb-bouteille"><img src="img/bouteilles/' + a.img + '" alt=""></div>' +
+        (a.img ? '<div class="tb-pic tb-bouteille"><img src="img/bouteilles/' + a.img + '" alt=""></div>' : '<div class="tb-pic">' + embleme("x-" + a.s, "e-tb-grand") + "</div>") +
         '<p class="tb-intro">' + a.intro + "</p></div>" +
       '<div class="tb-col tb-c2"><div class="tb-id tb-id-alc"><h3>Carte d’identité</h3><dl>' + id + "</dl></div>" +
         (cks ? '<h3 class="tb-ck-t">' + pluriel(cocktailsDe(a.s).length, "cocktail") + ' du Socle</h3><ul class="tb-cks">' + cks + "</ul>" : "") + "</div>" +
@@ -596,6 +633,8 @@
     else if (path[0] === "cocktail") viewCocktail(path[1], params.get("de"));
     else if (path[0] === "cocktails") viewCocktails();
     else if (path[0] === "galerie") viewGalerie();
+    else if (path[0] === "autres") viewAutres();
+    else if (path[0] === "autre") viewAutre(path[1]);
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
     lierCocktails(app, path[0] === "cocktail" ? path[1] : null);
