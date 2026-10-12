@@ -4,7 +4,7 @@ window.ALCOOLS = [
 {
   s: "gin", n: "Gin", titre: "Le Gin", famille: "Eau-de-vie de grains aromatisée", img: "gin.png",
   intro: "Le gin est une eau-de-vie (de céréales, de mélasse ou de vin) aromatisée principalement avec des baies de genièvre, qui lui donnent son goût unique.",
-  id: [["Famille", "Digestif — eau-de-vie de grains blanche"], ["Matières premières", "Céréales, mélasse ou vin"], ["Aromates", "Genièvre, coriandre, angélique, écorces d’agrumes, fenouil, réglisse, racines, fleurs"], ["Origine", "Hollande, très prisé des Anglais"], ["Degré", "37,5 % vol. minimum"], ["Marques vues en cours", "Beefeater, Bombay Sapphire"]],
+  id: [["Famille", "Digestif — eau-de-vie de grains blanche"], ["Matières premières", "Céréales, mélasse ou vin"], ["Aromates", "Genièvre, coriandre, angélique, écorces d’agrumes, fenouil, réglisse, racines, fleurs"], ["Origine", "Hollande, très prisé des Anglais"], ["Degré", "37,5 % vol. minimum"], ["Marques commerciales", "Beefeater, Bombay Sapphire"]],
   sec: [
     { t: "Fabrication", steps: ["On part d’une eau-de-vie de grains neutre.", "On ajoute les aromates, selon deux méthodes.", "On distille : les vapeurs d’alcool se chargent en arômes, puis sont condensées et refroidies.", "On ajoute de l’eau pour ramener l’alcool d’environ 80 % à 37,5 % vol. minimum."] },
     { t: "Les deux méthodes", list: ["<b>London Dry Gin</b> : les aromates sont placés dans l’alambic, l’alcool est aromatisé par distillation.", "<b>Gin simple</b> : les aromates sont ajoutés directement dans l’alcool par macération."] }
@@ -13,7 +13,7 @@ window.ALCOOLS = [
 {
   s: "rhum", n: "Rhum", titre: "Le Rhum", famille: "Eau-de-vie de canne à sucre", img: "rhum.png",
   intro: "Le rhum est une eau-de-vie de canne à sucre ; selon la matière première, on distingue le rhum agricole et le rhum traditionnel.",
-  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "Canne à sucre : jus frais (vesou) ou mélasse"], ["Origine", "Caraïbes, Antilles"], ["Degré à la distillation", "65 à 80 % vol."], ["Marques vues en cours", "Bacardi, Havana Club, Charrette, Clément, Trois Rivières, Saint James"]],
+  id: [["Famille", "Digestif — eau-de-vie de plante"], ["Matière première", "Canne à sucre : jus frais (vesou) ou mélasse"], ["Origine", "Caraïbes, Antilles"], ["Degré à la distillation", "65 à 80 % vol."], ["Marques commerciales", "Bacardi, Havana Club, Charrette, Clément, Trois Rivières, Saint James"]],
   sec: [
     { t: "Rhum agricole ou rhum traditionnel ?", table: [["", "Rhum agricole", "Rhum traditionnel (industriel)"], ["Matière première", "Jus de canne frais (vesou)", "Mélasse, résidu de la fabrication du sucre"], ["Production", "Surtout Antilles françaises", "Environ 90 % de la production mondiale"], ["Exemples", "Saint James, Clément, Trois Rivières", "Bacardi, Havana Club"]] },
     { t: "Fabrication", steps: ["Fermentation du vesou ou de la mélasse : on obtient un jus à 5-6 % vol.", "Distillation, le plus souvent en colonne : on obtient une eau-de-vie de 65 à 80 % vol.", "Vieillissement en fût de chêne (rhum ambré), ou pas (rhum blanc)."] }
@@ -22,7 +22,7 @@ window.ALCOOLS = [
 {
   s: "vodka", n: "Vodka", titre: "La Vodka", famille: "Eau-de-vie de grains blanche", img: "vodka.png",
   intro: "La vodka est une eau-de-vie de grains blanche, originaire de Russie et de Pologne, filtrée pour obtenir un goût très neutre.",
-  id: [["Famille", "Digestif — eau-de-vie de grains blanche"], ["Matières premières", "Céréales (blé, seigle, orge) ou mélasses de betterave et de pomme de terre"], ["Origine", "Russie et Pologne"], ["Degré", "37,5 % vol. minimum"], ["Marques vues en cours", "Absolut, Zubrowka, Eristoff"]],
+  id: [["Famille", "Digestif — eau-de-vie de grains blanche"], ["Matières premières", "Céréales (blé, seigle, orge) ou mélasses de betterave et de pomme de terre"], ["Origine", "Russie et Pologne"], ["Degré", "37,5 % vol. minimum"], ["Marques commerciales", "Absolut, Zubrowka, Eristoff"]],
   sec: [
     { t: "Fabrication", steps: ["<b>Maltage</b> : on trempe les céréales dans l’eau pour les faire germer.", "<b>Fermentation</b> : pendant 3 jours, les levures transforment le sucre en alcool.", "<b>Distillation</b> : en alambic à colonnes ; l’alcool passe au minimum par 3 colonnes successives pour sélectionner les arômes les plus fins.", "<b>Purification</b> : filtration au charbon de bois et au quartz, pour enlever les impuretés et les mauvais goûts.", "<b>Réduction</b> : on ajoute de l’eau distillée pour ramener le degré à 37,5 % vol."] }
   ]
@@ -30,7 +30,7 @@ window.ALCOOLS = [
 {
   s: "whisky", n: "Whisky", titre: "Le Whisky", famille: "Eau-de-vie de grains brune", img: "whisky.png",
   intro: "Le whisky est une eau-de-vie de grains brune, vieillie en fût de chêne ; c’est le digestif le plus consommé en France.",
-  id: [["Famille", "Digestif — eau-de-vie de grains brune"], ["Matières premières", "Céréales : orge maltée, maïs, seigle"], ["Pays producteurs", "Écosse, Irlande, Japon, États-Unis, France"], ["Degré à la distillation", "70 à 80 % vol."], ["Marques vues en cours", "Clan Campbell, Aberlour, Glenlivet, Chivas, Talisker, Paddy, Jameson, Wild Turkey"]],
+  id: [["Famille", "Digestif — eau-de-vie de grains brune"], ["Matières premières", "Céréales : orge maltée, maïs, seigle"], ["Pays producteurs", "Écosse, Irlande, Japon, États-Unis, France"], ["Degré à la distillation", "70 à 80 % vol."], ["Marques commerciales", "Clan Campbell, Aberlour, Glenlivet, Chivas, Talisker, Paddy, Jameson, Wild Turkey"]],
   sec: [
     { t: "Fabrication", steps: ["<b>Maltage</b> : l’orge est humidifiée (2 jours) pour activer la germination, qui transforme l’amidon en sucre (8 jours).", "<b>Touraillage</b> : l’orge maltée est séchée dans des fours, parfois à la fumée de tourbe (whisky tourbé).", "<b>Brassage</b> : la céréale réduite en farine est mélangée à l’eau chaude pour en extraire le sucre.", "<b>Fermentation</b> : les levures donnent un jus à 6-8 % vol.", "<b>Distillation</b> : en alambic à chauffe directe ou à colonne, jusqu’à 70-80 % vol.", "<b>Vieillissement</b> : en fût de chêne, souvent un fût ayant contenu du bourbon ou du xérès, qui apporte arômes et couleur.", "<b>Assemblage</b> : on mélange des whiskies de fûts, d’âges et de distilleries différents."] },
     { t: "Les types de whisky", table: [["Type", "Définition"], ["Single malt", "100 % orge maltée, une seule distillerie"], ["Pur malt", "100 % orge maltée, plusieurs distilleries"], ["Blend", "Mélange de whisky de malt et de whisky de grain"], ["Bourbon (États-Unis)", "Minimum 51 % de maïs"], ["Rye (États-Unis)", "Minimum 51 % de seigle"]] }
@@ -66,7 +66,7 @@ window.ALCOOLS = [
 {
   s: "cognac", n: "Cognac", titre: "Le Cognac", famille: "Eau-de-vie de vin", img: "cognac.png",
   intro: "Le cognac est une eau-de-vie de vin d’appellation d’origine contrôlée, issue d’une double distillation en alambic charentais et vieillie au moins 2 ans en fût de chêne.",
-  id: [["Famille", "Digestif — eau-de-vie de vin"], ["Matière première", "Vin blanc, cépage Ugni blanc"], ["Origine", "Charentes (AOC Cognac)"], ["Degré", "40 % vol. minimum"], ["Marques vues en cours", "Hennessy, Martell"]],
+  id: [["Famille", "Digestif — eau-de-vie de vin"], ["Matière première", "Vin blanc, cépage Ugni blanc"], ["Origine", "Charentes (AOC Cognac)"], ["Degré", "40 % vol. minimum"], ["Marques commerciales", "Hennessy, Martell"]],
   sec: [
     { t: "Fabrication", steps: ["On distille le vin une première fois dans un alambic charentais (à repasse) : on obtient le <b>brouillis</b>, à environ 30 % vol.", "On le distille une seconde fois, c’est la <b>bonne chauffe</b> : une eau-de-vie à environ 72 % vol.", "Vieillissement en fût de chêne, au moins 2 ans avant la commercialisation."] },
     { t: "Les trois grandes eaux-de-vie françaises", table: [["Eau-de-vie", "Terroir", "Matière première", "Distillation"], ["Cognac", "Charentes", "Vin (Ugni blanc)", "Double, alambic charentais"], ["Armagnac", "Gascogne", "Vin (Ugni blanc)", "Unique, alambic à colonne"], ["Calvados", "Normandie", "Cidre (pommes, parfois poires)", "Alambic charentais ou à colonne"]] },
@@ -76,7 +76,7 @@ window.ALCOOLS = [
 {
   s: "bitter", n: "Bitter", titre: "Le Bitter", famille: "Apéritif à base d’alcool", img: "bitter.png",
   intro: "Le bitter est une liqueur apéritive à base d’alcool neutre et de substances amères ; le mot « bitter » signifie « amer » en anglais et en allemand.",
-  id: [["Famille", "Apéritif à base d’alcool (A.B.A.)"], ["Aromates", "Écorce de quinquina, gentiane jaune, écorces d’orange, de citron et de pamplemousse"], ["Pays producteurs", "France (Corse), Italie (Sardaigne, Sicile), Espagne"], ["Marques vues en cours", "Campari, Picon, Angostura, Bitter San Pellegrino"]],
+  id: [["Famille", "Apéritif à base d’alcool (A.B.A.)"], ["Aromates", "Écorce de quinquina, gentiane jaune, écorces d’orange, de citron et de pamplemousse"], ["Pays producteurs", "France (Corse), Italie (Sardaigne, Sicile), Espagne"], ["Marques commerciales", "Campari, Picon, Angostura, Bitter San Pellegrino"]],
   sec: [
     { t: "Fabrication", steps: ["On part d’un alcool neutre à 96 % vol.", "On y fait macérer les aromates pendant environ 2 mois.", "Pour le Campari, la couleur rouge vient de la cochenille (colorant E120)."] },
     { t: "Les 4 catégories de bitters", table: [["Catégorie", "Exemple", "Usage"], ["Amers clairs", "Campari (Milan, Italie)", "Apéritif, cocktails"], ["Goudrons", "Picon", "Surtout mélangé à la bière"], ["Concentrés", "Angostura", "Épice à cocktail : quelques gouttes suffisent"], ["Sans alcool", "Bitter San Pellegrino", "Apéritif sans alcool"]] },
