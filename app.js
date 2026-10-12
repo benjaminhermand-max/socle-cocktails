@@ -104,10 +104,10 @@
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
         '<h1 class="display">Choisis ton alcool.<br><span>Découvre ses cocktails.</span></h1>' +
         '<p class="lead">Chaque alcool a sa présentation pour le comprendre, puis la liste des cocktails du Socle où il est utilisé, jusqu’à la fiche technique complète.</p>' +
-        '<form class="search" role="search" id="fq"><label for="q">Trouver un cocktail, un ingrédient, une méthode d’élaboration…</label>' +
+        '<form class="search" role="search" id="fq"><label for="q" class="sr-only">Rechercher un cocktail, un ingrédient, une méthode d’élaboration</label>' +
         '<div class="bubble"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
-        '<input id="q" type="search" autocomplete="off" placeholder="Mojito, menthe, shaker…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
-        '<button type="submit">Voir la fiche</button></div>' +
+        '<input id="q" type="search" autocomplete="off" placeholder="Rechercher : cocktails, ingrédients…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
+        '<button type="submit" aria-label="Voir la fiche"><span class="btn-txt">Voir la fiche</span><svg class="btn-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button></div>' +
         '<ul class="results" id="res" role="listbox" hidden></ul><p class="search-hint muted" id="qh" aria-live="polite"></p></form></div>' +
         '<div class="hero-media"><video src="img/accueil/accueil.mp4" poster="img/accueil/poster.jpg" autoplay muted loop playsinline aria-label="Aquarelle animée d’un comptoir de bar avec un Negroni, un Dry Martini, un French 75 et un Mojito"></video></div>' +
       '</div></section>' +
@@ -141,6 +141,10 @@
     var f = document.getElementById("fq"), q = document.getElementById("q"), res = document.getElementById("res"), hint = document.getElementById("qh");
     if (!q) return;
     var hits = [], cur = -1;
+    var petit = window.matchMedia("(max-width: 420px)");
+    function majTexte() { q.placeholder = petit.matches ? "Cocktails, ingrédients…" : "Rechercher : cocktails, ingrédients…"; }
+    majTexte();
+    if (petit.addEventListener) petit.addEventListener("change", majTexte);
     function close() { res.hidden = true; q.setAttribute("aria-expanded", "false"); cur = -1; }
     function show() {
       hits = chercher(q.value);

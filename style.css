@@ -291,3 +291,22 @@ a.ck:hover { color: var(--gold-ink); }
   .nav::-webkit-scrollbar { display: none; }
   .nav a { padding: 8px 14px; font-size: 14px; white-space: nowrap; min-height: 40px; }
 }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.bubble input::placeholder { color: #8A8378; opacity: 1; }
+.search { margin-top: 30px; }
+.bubble .btn-ico { display: none; }
+.bubble input::-webkit-search-cancel-button { -webkit-appearance: none; height: 18px; width: 18px; cursor: pointer;
+  background: no-repeat center/14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235F5A52' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E"); }
+@media (max-width: 520px) {
+  .bubble button { width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; }
+  .bubble .btn-txt { display: none; }
+  .bubble .btn-ico { display: block; }
+  .search .bubble input { font-size: 16px; }
+}
+.search { max-width: 580px; }
+@media (max-width: 520px) {
+  .bubble { padding-left: 12px; gap: 6px; }
+  .search .bubble input { font-size: 15.5px; padding-left: 0; }
+  .search .bubble input::-webkit-search-cancel-button { display: none; }
+}
