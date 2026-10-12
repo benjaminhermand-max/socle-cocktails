@@ -191,6 +191,12 @@
     return '<section class="block"><h3>' + sec.t + "</h3>" + body + "</section>";
   }
 
+  function embleme(slug, cls) {
+    var e = (window.EMBLEMES || {})[slug];
+    if (!e) return "";
+    return '<span class="embleme ' + (cls || "") + '" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + e + "</svg></span>";
+  }
+
   function carteCocktail(c, slug) {
     var ings = c.ing.map(function (i) {
       var hl = slug && i[2] === slug;
@@ -200,7 +206,7 @@
     return '<a class="card-cocktail" href="#/cocktail/' + c.s + (slug ? "?de=" + slug : "") + '">' +
       '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"></div>' +
       '<div class="body"><div><div class="meta"><span class="cat">' + c.c + '</span><span class="muted">TAV ' + c.tav + ' %</span></div>' +
-      "<h3>" + esc(c.n) + '</h3><p class="profil">' + esc(c.p) + "</p></div>" +
+      "<h3>" + embleme(c.s, "e-carte") + "<span>" + esc(c.n) + '</span></h3><p class="profil">' + esc(c.p) + "</p></div>" +
       '<ul class="ings">' + ings + "</ul>" +
       '<div class="chips">' + badge + '<span class="chip">' + METHODES[c.m] + '</span><span class="chip">Verre ' + VERRES[c.v] + "</span></div></div></a>";
   }
@@ -276,7 +282,7 @@
     var grid = document.getElementById("liste");
     function draw(f) {
       grid.innerHTML = sorted.filter(function (c) { return f === "Tous" || c.c === f; }).map(function (c) {
-        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"><span>' + esc(c.n) + "</span></a></li>";
+        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy">' + embleme(c.s, "e-galerie") + "<span>" + esc(c.n) + "</span></a></li>";
       }).join("");
     }
     draw("Tous");
@@ -314,7 +320,7 @@
     var q = from ? "?de=" + from.s : "";
     app.innerHTML =
       '<div class="wrap">' + back +
-      '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display">' + esc(c.n) + '</h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p></div>" +
+      '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display titre-embleme">' + embleme(c.s, "e-fiche") + "<span>" + esc(c.n) + '</span></h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p></div>" +
         '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="Illustration du cocktail ' + esc(c.n) + '"></div></section>' +
       '<div class="fiche-grid"><section class="block recette"><h2 class="h2">Recette</h2><ul>' + recette + "</ul>" +
         '<p class="order-note">Ingrédients dans l’ordre de la recette : du moins cher au plus cher.</p></section>' +

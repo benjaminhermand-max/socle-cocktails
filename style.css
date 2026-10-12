@@ -369,7 +369,23 @@ a.ck:hover { color: var(--gold-ink); }
 .galerie a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 10px 16px; background: #fff; border: 1px solid var(--line, #E7E1D6); border-radius: 18px; text-decoration: none; color: var(--dark); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .galerie a:hover, .galerie a:focus-visible { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(29,27,24,.10); border-color: var(--gold); }
 .galerie img { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; }
-.galerie span { font-family: "Bebas Neue", Impact, sans-serif; font-size: 23px; letter-spacing: .5px; line-height: 1.05; text-align: center; }
-@media (max-width: 520px) { .galerie { grid-template-columns: repeat(2, 1fr); gap: 10px; } .galerie span { font-size: 20px; } }
+.galerie a > span:not(.embleme) { font-family: "Bebas Neue", Impact, sans-serif; font-size: 23px; letter-spacing: .5px; line-height: 1.05; text-align: center; }
+@media (max-width: 520px) { .galerie { grid-template-columns: repeat(2, 1fr); gap: 10px; } .galerie a > span:not(.embleme) { font-size: 20px; } }
 @media (prefers-reduced-motion: reduce) { .galerie a { transition: none; } .galerie a:hover { transform: none; } }
 .galerie a { height: 100%; box-sizing: border-box; }
+
+/* Bas de page aéré, avec signature */
+footer.site p { margin: 0 0 12px; max-width: 70ch; }
+footer.site p:last-child { margin-bottom: 0; }
+footer.site .signature { color: var(--dark); font-weight: 500; }
+footer.site .signature span { display: inline-block; margin-top: 4px; letter-spacing: 2px; color: var(--gold-ink); font-weight: 700; font-size: 13px; }
+
+/* Emblèmes : médaillon rond doré */
+.embleme { display: inline-flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; border: 2px solid var(--gold); background: #FBF3DD; color: var(--gold-ink); }
+.embleme svg { width: 62%; height: 62%; display: block; }
+.titre-embleme { display: flex; align-items: center; gap: .16em; }
+.e-fiche { width: .78em; height: .78em; border-width: 3px; }
+.card-cocktail h3 { display: flex; align-items: center; gap: 10px; }
+.e-carte { width: 36px; height: 36px; border-width: 1.5px; }
+.e-galerie { width: 40px; height: 40px; border-width: 1.5px; margin-top: 2px; }
+@media (max-width: 520px) { .e-fiche { border-width: 2px; } .e-galerie { width: 34px; height: 34px; } .e-carte { width: 30px; height: 30px; } }
