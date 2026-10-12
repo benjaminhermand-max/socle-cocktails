@@ -1,3 +1,8 @@
+@font-face { font-family: "Bebas Neue"; src: url("fonts/bebas-neue.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Sans"; src: url("fonts/dm-sans-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Sans"; src: url("fonts/dm-sans-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "DM Sans"; src: url("fonts/dm-sans-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
 :root {
   --bg: #FAF8F4;
   --surface: #FFFFFF;
@@ -344,3 +349,8 @@ a.ck:hover { color: var(--gold-ink); }
 .hero .wrap { align-items: flex-start; padding-top: 32px; }
 .hero-media { padding-top: 20px; }
 @media (max-width: 900px) { .hero-media { padding-top: 0; } }
+
+/* Titre d'accueil réduit pour tenir dans l'écran à l'ouverture */
+.hero h1 { font-size: clamp(46px, 5vw, 70px); line-height: 0.95; }
+.hero p.lead { margin-top: 16px; }
+.hero .wrap { padding-bottom: 40px; }
