@@ -223,7 +223,8 @@
       '<div class="wrap"><a class="back" href="#/">' + ICON_BACK + "Tous les alcools</a>" +
       '<div class="alc-hero"><div class="alc-main"><p class="eyebrow">' + esc(a.famille) + "</p>" +
         '<div class="alc-title"><h1 class="display">' + esc(a.titre) + '</h1><img src="img/bouteilles/' + a.img + '" alt="Bouteille : ' + esc(a.n) + '"></div>' +
-        '<p class="intro">' + a.intro + "</p></div>" +
+        '<p class="intro">' + a.intro + "</p>" +
+        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
         '<aside class="id-card"><h2 class="display">Carte d’identité</h2><dl>' + id + "</dl></aside></div>" +
       '<div class="sections">' + a.sec.map(renderSection).join("") + "</div></div>" +
       '<section class="band"><div class="wrap section">' +
@@ -242,6 +243,10 @@
         app.querySelectorAll(".filters button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
         draw(b.dataset.f);
       });
+    });
+    document.getElementById("btnTableau").addEventListener("click", function () {
+      ouvrirTableau({ liste: A, courant: a, rendu: contenuTableauAlcool, classe: "tb-alcool", aide: "← → changer d’alcool",
+        hash: function (x) { return "#/alcool/" + x.s; } });
     });
   }
 
@@ -333,7 +338,9 @@
       '<nav class="prevnext" aria-label="Cocktail précédent ou suivant">' +
         '<a href="#/cocktail/' + prev.s + q + '">' + ICON_BACK + esc(prev.n) + "</a>" +
         '<a href="#/cocktail/' + next.s + q + '">' + esc(next.n) + ICON_NEXT + "</a></nav></div>";
-    document.getElementById("btnTableau").addEventListener("click", function () { ouvrirTableau(c, liste, q); });
+    document.getElementById("btnTableau").addEventListener("click", function () {
+      ouvrirTableau({ liste: liste, courant: c, rendu: contenuTableau, hash: function (x) { return "#/cocktail/" + x.s + q; } });
+    });
   }
 
   /* ---------- Mode tableau : la fiche en plein écran, tout visible d'un coup ---------- */
@@ -372,49 +379,72 @@
     nom.style.fontSize = t + "em";
     while (nom.scrollWidth > col.clientWidth + 1 && t > 2) { t -= 0.1; nom.style.fontSize = t + "em"; }
   }
-  function afficherTableau(c) {
-    tableau.querySelector(".tb-page").innerHTML = contenuTableau(c);
-    tableau.dataset.slug = c.s;
-    var imgs = tableau.querySelectorAll("img"), reste = imgs.length;
+  var optsTableau = null;
+  function afficherTableau(item) {
+    tableau.querySelector(".tb-page").className = "tb-page " + (optsTableau.classe || "");
+    tableau.querySelector(".tb-page").innerHTML = optsTableau.rendu(item);
+    optsTableau.courant = item;
     ajusterTableau();
-    Array.prototype.forEach.call(imgs, function (im) { if (!im.complete) im.addEventListener("load", ajusterTableau, { once: true }); });
+    Array.prototype.forEach.call(tableau.querySelectorAll("img"), function (im) { if (!im.complete) im.addEventListener("load", ajusterTableau, { once: true }); });
   }
   function fermerTableau() {
     if (!tableau) return;
-    var slug = tableau.dataset.slug;
     document.removeEventListener("keydown", toucheTableau);
     window.removeEventListener("resize", ajusterTableau);
     tableau.remove(); tableau = null;
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
     route();
   }
-  var listeTableau = [], qTableau = "";
   function toucheTableau(e) {
     if (!tableau) return;
-    var i = listeTableau.indexOf(cocktail(tableau.dataset.slug));
+    var l = optsTableau.liste, i = l.indexOf(optsTableau.courant);
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       e.preventDefault();
-      var c = listeTableau[(i + (e.key === "ArrowRight" ? 1 : -1) + listeTableau.length) % listeTableau.length];
-      history.replaceState(null, "", "#/cocktail/" + c.s + qTableau);
-      afficherTableau(c);
+      var x = l[(i + (e.key === "ArrowRight" ? 1 : -1) + l.length) % l.length];
+      history.replaceState(null, "", optsTableau.hash(x));
+      afficherTableau(x);
     } else if (e.key === "Escape" && !document.fullscreenElement) fermerTableau();
   }
-  function ouvrirTableau(c, liste, q) {
-    listeTableau = liste; qTableau = q;
+  function ouvrirTableau(opts) {
+    optsTableau = opts;
     tableau = document.createElement("div");
     tableau.className = "tableau";
     tableau.setAttribute("role", "dialog");
     tableau.setAttribute("aria-label", "Fiche en plein écran");
-    tableau.innerHTML = '<div class="tb-barre"><span>← → changer de cocktail · Échap pour quitter</span>' +
+    tableau.innerHTML = '<div class="tb-barre"><span>' + (opts.aide || "← → changer de cocktail") + ' · Échap pour quitter</span>' +
       '<button type="button" class="tb-fermer" aria-label="Quitter le plein écran">✕</button></div><div class="tb-page"></div>';
     document.body.appendChild(tableau);
     tableau.querySelector(".tb-fermer").addEventListener("click", fermerTableau);
     document.addEventListener("keydown", toucheTableau);
     window.addEventListener("resize", ajusterTableau);
-    afficherTableau(c);
+    afficherTableau(opts.courant);
     if (tableau.requestFullscreen) tableau.requestFullscreen().then(ajusterTableau).catch(function () {});
     tableau.querySelector(".tb-fermer").focus();
   }
+
+  /* Plein écran d'un alcool */
+  function contenuTableauAlcool(a) {
+    var id = a.id.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("");
+    var cks = cocktailsDe(a.s).map(function (c) { return "<li>" + esc(c.n) + "</li>"; }).join("");
+    var secs = a.sec.map(function (sec) {
+      var body = "";
+      if (sec.steps) body = '<ol class="tb-tech">' + sec.steps.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ol>";
+      else if (sec.list) body = '<ul class="tb-liste">' + sec.list.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>";
+      else if (sec.table) body = '<table class="tb-table"><thead><tr>' + sec.table[0].map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr></thead><tbody>" +
+        sec.table.slice(1).map(function (r) { return "<tr>" + r.map(function (c, i) { return i === 0 ? "<td><b>" + c + "</b></td>" : "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+      else if (sec.text) body = '<p class="tb-texte">' + sec.text + "</p>";
+      return '<section class="tb-sec"><h3>' + sec.t + "</h3>" + body + "</section>";
+    }).join("");
+    return '<div class="tb-col tb-c1">' +
+        '<p class="tb-eyebrow">' + esc(a.famille) + "</p>" +
+        '<h2 class="tb-nom"><span>' + esc(a.titre) + "</span></h2>" +
+        '<div class="tb-pic tb-bouteille"><img src="img/bouteilles/' + a.img + '" alt=""></div>' +
+        '<p class="tb-intro">' + a.intro + "</p></div>" +
+      '<div class="tb-col tb-c2"><div class="tb-id tb-id-alc"><h3>Carte d’identité</h3><dl>' + id + "</dl></div>" +
+        (cks ? '<h3 class="tb-ck-t">' + pluriel(cocktailsDe(a.s).length, "cocktail") + ' du Socle</h3><ul class="tb-cks">' + cks + "</ul>" : "") + "</div>" +
+      '<div class="tb-col tb-c3">' + secs + "</div>";
+  }
+
   document.addEventListener("fullscreenchange", function () { if (!document.fullscreenElement && tableau) fermerTableau(); else ajusterTableau(); });
 
   /* ---------- Connaissances ---------- */
