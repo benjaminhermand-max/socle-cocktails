@@ -339,3 +339,8 @@ a.ck:hover { color: var(--gold-ink); }
   .topbar .search { width: 400px; }
   .topbar .search .bubble input { font-size: 14px; text-overflow: clip; }
 }
+
+/* Accueil : vidéo calée en haut pour être visible en entier à l'ouverture */
+.hero .wrap { align-items: flex-start; padding-top: 32px; }
+.hero-media { padding-top: 20px; }
+@media (max-width: 900px) { .hero-media { padding-top: 0; } }
