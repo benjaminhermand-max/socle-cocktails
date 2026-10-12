@@ -29,6 +29,52 @@
   function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
   function pluriel(n, mot) { return n + " " + mot + (n > 1 ? "s" : ""); }
 
+  /* ---------- Liens automatiques vers les fiches ---------- */
+  // Noms reconnus : les 36 cocktails + quelques appellations utilisées dans les cours.
+  // Les noms associés à null sont des cocktails différents (variantes) : ils ne sont pas liés.
+  var NOMS = (function () {
+    var m = C.map(function (c) { return [c.n, c.s]; }).filter(function (x) { return x[0] !== "Sour" && x[0] !== "Fizz"; });
+    m = m.concat([["Gin Fizz", "fizz"], ["Whiskey Sour", "sour"], ["Rye Whiskey Old-Fashioned", "old-fashioned"],
+      ["Negroni Sbagliato", null], ["White Negroni", null], ["Dirty Martini", null], ["Tommy’s Margarita", null], ["Manhattan Inn", null], ["Pina Colada", "pina-colada"]]);
+    return m.sort(function (a, b) { return b[0].length - a[0].length; });
+  })();
+  var RE_NOMS = new RegExp("(?<![\\p{L}\\d])(" + NOMS.map(function (x) {
+    return x[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[’']/g, "['’]");
+  }).join("|") + ")(?![\\p{L}\\d])", "gu");
+  function slugDuNom(txt) {
+    var t = txt.replace(/'/g, "’").toLowerCase();
+    for (var i = 0; i < NOMS.length; i++) if (NOMS[i][0].toLowerCase() === t) return NOMS[i][1];
+    return null;
+  }
+  function lierCocktails(root, sauf) {
+    if (!root) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var el = n.parentElement;
+        if (!el || el.closest("a, h1, h2, h3, button, input, label, textarea, [data-nolink]")) return NodeFilter.FILTER_REJECT;
+        RE_NOMS.lastIndex = 0;
+        return RE_NOMS.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var txt = n.nodeValue, frag = document.createDocumentFragment(), last = 0, m, lie = false;
+      RE_NOMS.lastIndex = 0;
+      while ((m = RE_NOMS.exec(txt))) {
+        var slug = slugDuNom(m[1]);
+        if (!slug || slug === sauf) continue;
+        frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var a = document.createElement("a");
+        a.className = "ck"; a.href = "#/cocktail/" + slug; a.textContent = m[1];
+        frag.appendChild(a); last = m.index + m[1].length; lie = true;
+      }
+      if (!lie) return;
+      frag.appendChild(document.createTextNode(txt.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    });
+  }
+
   var ICON_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
   var ICON_NEXT = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
 
@@ -58,9 +104,11 @@
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
         '<h1 class="display">Choisis ton alcool.<br><span>Découvre ses cocktails.</span></h1>' +
         '<p class="lead">Chaque alcool a sa présentation pour le comprendre, puis la liste des cocktails du Socle où il est utilisé, jusqu’à la fiche technique complète.</p>' +
-        '<div class="search" role="search"><label for="q">Trouver un cocktail</label>' +
-        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
-        '<input id="q" type="search" autocomplete="off" placeholder="Mojito, gin, shaker…" aria-controls="res"><ul class="results" id="res" hidden></ul></div></div>' +
+        '<form class="search" role="search" id="fq"><label for="q">Trouver un cocktail</label>' +
+        '<div class="bubble"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
+        '<input id="q" type="search" autocomplete="off" placeholder="Tape un cocktail : Mojito, Negroni…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
+        '<button type="submit">Voir la fiche</button></div>' +
+        '<ul class="results" id="res" role="listbox" hidden></ul><p class="search-hint muted" id="qh" aria-live="polite"></p></form></div>' +
         '<div class="hero-media"><video src="img/accueil/accueil.mp4" poster="img/accueil/poster.jpg" autoplay muted loop playsinline aria-label="Aquarelle animée d’un comptoir de bar avec un Negroni, un Dry Martini, un French 75 et un Mojito"></video></div>' +
       '</div></section>' +
       '<section class="section"><div class="wrap"><div class="section-head"><h2 class="display">Les alcools du Socle</h2><span class="muted">du plus utilisé au moins utilisé</span></div>' +
@@ -72,25 +120,57 @@
     initSearch();
   }
 
+  function chercher(v) {
+    v = norm(v.trim().replace(/'/g, "’"));
+    if (v.length < 1) return [];
+    var res = [];
+    C.forEach(function (c) {
+      var n = norm(c.n), score = -1;
+      if (n === v) score = 0;
+      else if (n.indexOf(v) === 0) score = 1;
+      else if (n.split(/[\s’-]/).some(function (w) { return w.indexOf(v) === 0; })) score = 2;
+      else if (n.indexOf(v) !== -1) score = 3;
+      else if (v.length >= 3 && norm(c.ing.map(function (i) { return i[1]; }).join(" ")).indexOf(v) !== -1) score = 4;
+      if (score >= 0) res.push([score, c]);
+    });
+    return res.sort(function (a, b) { return a[0] - b[0] || a[1].n.localeCompare(b[1].n, "fr"); }).map(function (x) { return x[1]; });
+  }
+
   function initSearch() {
-    var q = document.getElementById("q"), res = document.getElementById("res");
+    var f = document.getElementById("fq"), q = document.getElementById("q"), res = document.getElementById("res"), hint = document.getElementById("qh");
     if (!q) return;
-    q.addEventListener("input", function () {
-      var v = norm(q.value.trim());
-      if (v.length < 2) { res.hidden = true; res.innerHTML = ""; return; }
-      var hits = C.filter(function (c) {
-        var hay = norm(c.n + " " + c.ing.map(function (i) { return i[1]; }).join(" ") + " " + METHODES[c.m] + " " + c.c);
-        return hay.indexOf(v) !== -1;
-      }).slice(0, 12);
-      res.innerHTML = hits.length ? hits.map(function (c) {
-        return '<li><a href="#/cocktail/' + c.s + '"><img src="img/cocktails/' + c.s + '.jpg" alt=""><span><b>' + esc(c.n) + '</b><small>' + esc(c.c + " · " + METHODES[c.m]) + '</small></span></a></li>';
-      }).join("") : '<li class="muted" style="padding:10px">Aucun cocktail trouvé.</li>';
-      res.hidden = false;
-    });
+    var hits = [], cur = -1;
+    function close() { res.hidden = true; q.setAttribute("aria-expanded", "false"); cur = -1; }
+    function show() {
+      hits = chercher(q.value).slice(0, 8);
+      hint.textContent = "";
+      if (!q.value.trim()) { res.innerHTML = ""; close(); return; }
+      res.innerHTML = hits.length ? hits.map(function (c, i) {
+        var viaIng = norm(c.n).indexOf(norm(q.value.trim())) === -1;
+        return '<li role="option" id="opt' + i + '"><a href="#/cocktail/' + c.s + '"><img src="img/cocktails/' + c.s + '.jpg" alt=""><span><b>' + esc(c.n) + '</b><small>' +
+          esc(viaIng ? "Contient : " + q.value.trim() : c.c + " · " + METHODES[c.m]) + '</small></span></a></li>';
+      }).join("") : '<li class="muted" style="padding:10px 12px">Aucun cocktail trouvé. Vérifie l’orthographe.</li>';
+      res.hidden = false; q.setAttribute("aria-expanded", "true"); cur = -1;
+    }
+    function mark() {
+      res.querySelectorAll("a").forEach(function (a, i) { a.classList.toggle("on", i === cur); });
+      if (cur >= 0) q.setAttribute("aria-activedescendant", "opt" + cur); else q.removeAttribute("aria-activedescendant");
+    }
+    q.addEventListener("input", show);
+    q.addEventListener("focus", function () { if (q.value.trim()) show(); });
     q.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") { q.value = ""; res.hidden = true; }
-      if (e.key === "Enter") { var a = res.querySelector("a"); if (a) location.hash = a.getAttribute("href"); }
+      if (e.key === "ArrowDown" && hits.length) { e.preventDefault(); cur = Math.min(cur + 1, hits.length - 1); mark(); }
+      else if (e.key === "ArrowUp" && hits.length) { e.preventDefault(); cur = Math.max(cur - 1, 0); mark(); }
+      else if (e.key === "Escape") { q.value = ""; close(); }
     });
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var list = chercher(q.value);
+      var c = cur >= 0 ? hits[cur] : list[0];
+      if (c) location.hash = "#/cocktail/" + c.s;
+      else hint.textContent = q.value.trim() ? "Aucun cocktail ne correspond à « " + q.value.trim() + " »." : "Tape le nom d’un cocktail.";
+    });
+    document.addEventListener("click", function (e) { if (!f.contains(e.target)) close(); });
   }
 
   /* ---------- Page alcool ---------- */
@@ -234,7 +314,7 @@
       case "familles":
         html = '<p class="lead">Les familles liées au Socle. Comme il existe de nombreux autres cocktails, il existe de nombreuses autres familles.</p>' +
           '<div class="block table-scroll"><table><thead><tr><th>Famille</th><th>Catégorie</th><th>Réalisation</th><th>Composition</th><th>Le plus connu</th></tr></thead><tbody>' +
-          S.familles.map(function (f) { return "<tr><td><b>" + f[0] + "</b></td><td>" + f[1] + "</td><td>" + f[2] + "</td><td>" + f[3] + "</td><td>" + f[4] + "</td></tr>"; }).join("") + "</tbody></table></div>";
+          S.familles.map(function (f) { return "<tr><td data-nolink><b>" + f[0] + "</b></td><td>" + f[1] + "</td><td>" + f[2] + "</td><td>" + f[3] + "</td><td>" + f[4] + "</td></tr>"; }).join("") + "</tbody></table></div>";
         break;
       case "methodes":
         html = '<p class="lead">Les trois méthodes de réalisation des cocktails du Socle, étape par étape.</p>' +
@@ -315,6 +395,7 @@
       var v = norm(input.value.trim());
       var items = S.lexique.filter(function (x) { return !v || norm(x[0] + " " + x[1]).indexOf(v) !== -1; });
       list.innerHTML = items.length ? items.map(function (x) { return "<div><dt>" + x[0] + "</dt><dd>" + x[1] + "</dd></div>"; }).join("") : '<div><dd>Aucun mot trouvé.</dd></div>';
+      lierCocktails(list);
     }
     input.addEventListener("input", draw);
     draw();
@@ -334,6 +415,7 @@
     else if (path[0] === "cocktails") viewCocktails();
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
+    lierCocktails(app, path[0] === "cocktail" ? path[1] : null);
     window.scrollTo(0, 0);
     var h1 = app.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
   }

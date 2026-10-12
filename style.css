@@ -253,3 +253,21 @@ footer.site { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size
 h1[tabindex="-1"]:focus { outline: none; }
 .wrap.section { padding: 56px 24px; }
 @media (max-width: 640px) { .wrap.section { padding: 40px 16px; } }
+
+/* Liens vers les fiches cocktails */
+a.ck { font-weight: 700; color: inherit; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a.ck:hover { color: var(--gold-ink); }
+.three-s a.ck, .formula a.ck, .identite a.ck, .cta-dark a.ck { color: #fff; }
+
+/* Bulle de recherche */
+.search { max-width: 540px; }
+.search label { font-size: 15px; }
+.bubble { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px solid var(--ink); border-radius: 999px; padding: 6px 6px 6px 18px; box-shadow: 0 10px 26px rgba(29,27,24,0.08); }
+.bubble:focus-within { border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-soft); }
+.bubble svg { position: static; flex: none; }
+.search .bubble input { flex: 1 1 auto; min-width: 0; border: 0; padding: 10px 4px; background: transparent; font-size: 17px; outline: none; border-radius: 0; }
+.bubble button { flex: none; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: var(--dark); color: #fff; font-weight: 700; font-size: 15px; cursor: pointer; }
+.bubble button:hover { background: var(--gold); color: var(--ink); }
+.results a.on { background: var(--gold-soft); }
+.search-hint { margin: 8px 0 0 18px; font-size: 14px; min-height: 1em; }
+@media (max-width: 480px) { .bubble button { padding: 0 14px; font-size: 14px; } .bubble { padding-left: 14px; } }
