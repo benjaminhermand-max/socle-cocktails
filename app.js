@@ -104,11 +104,7 @@
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
         '<h1 class="display">L’art du cocktail.<br><span>De l’alcool à la fiche technique.</span></h1>' +
         '<p class="lead">Comprendre chaque spiritueux, connaître ses grands classiques et les réaliser dans les règles : le Socle des cocktails de référence, version élève.</p>' +
-        '<form class="search" role="search" id="fq"><label for="q" class="sr-only">Rechercher un cocktail, un ingrédient, une méthode d’élaboration</label>' +
-        '<div class="bubble"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
-        '<input id="q" type="search" autocomplete="off" placeholder="Rechercher : cocktails, ingrédients…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">' +
-        '<button type="submit" aria-label="Voir la fiche"><span class="btn-txt">Voir la fiche</span><svg class="btn-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button></div>' +
-        '<ul class="results" id="res" role="listbox" hidden></ul><p class="search-hint muted" id="qh" aria-live="polite"></p></form></div>' +
+        '</div>' +
         '<div class="hero-media"><video src="img/accueil/accueil.mp4" poster="img/accueil/poster.jpg" autoplay muted loop playsinline aria-label="Aquarelle animée d’un comptoir de bar avec un Negroni, un Dry Martini, un French 75 et un Mojito"></video></div>' +
       '</div></section>' +
       '<section class="section"><div class="wrap"><div class="section-head"><h2 class="display">Les alcools du Socle</h2><span class="muted">du plus utilisé au moins utilisé</span></div>' +
@@ -117,7 +113,6 @@
         '<div class="grid-savoirs">' + tiles + '</div></div></section>' +
       '<section class="section"><div class="wrap"><div class="cta-dark"><div><h2 class="display">Autres apéritifs &amp; digestifs</h2>' +
         '<p>Anisés, quinquinas, gentianes, vins doux naturels, armagnac, calvados… Cette rubrique arrive bientôt.</p></div><span class="pill-gold">Bientôt</span></div></div></section>';
-    initSearch();
   }
 
   function chercher(v) {
@@ -182,6 +177,7 @@
       else hint.textContent = q.value.trim() ? "Aucun cocktail ne correspond à « " + q.value.trim() + " »." : "Tape le nom d’un cocktail.";
     });
     document.addEventListener("click", function (e) { if (!f.contains(e.target)) close(); });
+    window.fermerRecherche = function () { q.value = ""; hint.textContent = ""; res.innerHTML = ""; close(); q.blur(); };
   }
 
   /* ---------- Page alcool ---------- */
@@ -427,10 +423,12 @@
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
     lierCocktails(app, path[0] === "cocktail" ? path[1] : null);
+    if (window.fermerRecherche) window.fermerRecherche();
     window.scrollTo(0, 0);
     var h1 = app.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
   }
   window.addEventListener("hashchange", route);
+  initSearch();
   route();
 
   /* ---------- Retour en haut ---------- */

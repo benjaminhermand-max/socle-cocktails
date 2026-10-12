@@ -26,6 +26,16 @@
         <svg width="30" height="30" viewBox="0 0 512 512" aria-hidden="true"><path d="M136 152 H376 L256 286 Z" fill="#D4A017" opacity="0.22"/><line x1="214" y1="226" x2="334" y2="104" stroke="#5F5A52" stroke-width="16" stroke-linecap="round"/><circle cx="336" cy="102" r="16" fill="#5F5A52"/><ellipse cx="222" cy="218" rx="40" ry="33" transform="rotate(-45 222 218)" fill="#7A9A2E"/><circle cx="236" cy="228" r="11" fill="#B5462E"/><path d="M110 136 H402 L256 300 Z" fill="none" stroke="#D4A017" stroke-width="28" stroke-linejoin="round"/><line x1="256" y1="300" x2="256" y2="404" stroke="#D4A017" stroke-width="28" stroke-linecap="round"/><line x1="190" y1="410" x2="322" y2="410" stroke="#D4A017" stroke-width="28" stroke-linecap="round"/></svg>
         <span>Socle des Cocktails</span>
       </a>
+      <form class="search" role="search" id="fq">
+        <label for="q" class="sr-only">Rechercher un cocktail, un ingrédient, une méthode d’élaboration</label>
+        <div class="bubble">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F5A52" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q" type="search" autocomplete="off" placeholder="Rechercher : cocktails, ingrédients…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="res">
+          <button type="submit" aria-label="Voir la fiche"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <ul class="results" id="res" role="listbox" hidden></ul>
+        <p class="search-hint muted" id="qh" aria-live="polite"></p>
+      </form>
       <nav class="nav" aria-label="Navigation principale">
         <a href="#/" data-section="alcools">Les alcools</a>
         <a href="#/cocktails" data-section="cocktails">Les cocktails</a>
