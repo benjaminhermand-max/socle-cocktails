@@ -243,7 +243,7 @@
     setNav("cocktails");
     document.title = "Les 36 cocktails — Socle des Cocktails";
     var sorted = C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); });
-    app.innerHTML = '<div class="wrap section"><div class="cocktails-head"><div><p class="eyebrow">Socle des Cocktails de Référence</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Les 36 cocktails</h1></div>' +
+    app.innerHTML = '<div class="wrap section"><div class="cocktails-head"><div><p class="eyebrow">Socle des Cocktails de Référence</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Les 36 cocktails</h1>' + basculeVue("liste") + '</div>' +
       '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
       ["Tous", "Short drink", "Long drink"].map(function (f, i) { return '<button type="button" data-f="' + f + '" aria-pressed="' + (i === 0) + '">' + f + "</button>"; }).join("") +
       '</div></div><div class="grid-cocktails" id="liste"></div></div>';
@@ -258,14 +258,45 @@
     });
   }
 
+  /* ---------- Galerie ---------- */
+  function basculeVue(actif) {
+    return '<nav class="vue" aria-label="Affichage">' +
+      '<a href="#/cocktails"' + (actif === "liste" ? ' aria-current="page"' : "") + '>Liste</a>' +
+      '<a href="#/galerie"' + (actif === "galerie" ? ' aria-current="page"' : "") + '>Galerie</a></nav>';
+  }
+  function viewGalerie() {
+    setNav("cocktails");
+    document.title = "Galerie des cocktails — Socle des Cocktails";
+    var sorted = C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); });
+    app.innerHTML = '<div class="wrap section"><div class="cocktails-head"><div><p class="eyebrow">Socle des Cocktails de Référence</p>' +
+      '<h1 class="display" style="font-size:clamp(52px,8vw,92px)">La galerie</h1>' + basculeVue("galerie") + '</div>' +
+      '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
+      ["Tous", "Short drink", "Long drink"].map(function (f, i) { return '<button type="button" data-f="' + f + '" aria-pressed="' + (i === 0) + '">' + f + "</button>"; }).join("") +
+      '</div></div><ul class="galerie" id="liste" data-nolink></ul></div>';
+    var grid = document.getElementById("liste");
+    function draw(f) {
+      grid.innerHTML = sorted.filter(function (c) { return f === "Tous" || c.c === f; }).map(function (c) {
+        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"><span>' + esc(c.n) + "</span></a></li>";
+      }).join("");
+    }
+    draw("Tous");
+    app.querySelectorAll(".filters button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        app.querySelectorAll(".filters button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        draw(b.dataset.f);
+      });
+    });
+  }
+
   /* ---------- Fiche technique ---------- */
   function viewCocktail(slug, de) {
     var c = cocktail(slug);
     if (!c) return viewIntrouvable();
-    setNav(de ? "alcools" : "cocktails");
+    setNav(de && de !== "galerie" ? "alcools" : "cocktails");
     document.title = c.n + " — fiche technique";
     var from = de && alcool(de) ? alcool(de) : null;
-    var back = from ? '<a class="back" href="#/alcool/' + from.s + '">' + ICON_BACK + "Cocktails : " + esc(from.n) + "</a>"
+    var back = de === "galerie" ? '<a class="back" href="#/galerie">' + ICON_BACK + "La galerie</a>"
+             : from ? '<a class="back" href="#/alcool/' + from.s + '">' + ICON_BACK + "Cocktails : " + esc(from.n) + "</a>"
                     : '<a class="back" href="#/cocktails">' + ICON_BACK + "Tous les cocktails</a>";
     var recette = c.ing.map(function (i) {
       var a = i[2] ? alcool(i[2]) : null;
@@ -420,6 +451,7 @@
     else if (path[0] === "alcool") viewAlcool(path[1]);
     else if (path[0] === "cocktail") viewCocktail(path[1], params.get("de"));
     else if (path[0] === "cocktails") viewCocktails();
+    else if (path[0] === "galerie") viewGalerie();
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
     lierCocktails(app, path[0] === "cocktail" ? path[1] : null);

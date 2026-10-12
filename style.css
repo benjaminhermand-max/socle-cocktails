@@ -357,3 +357,19 @@ a.ck:hover { color: var(--gold-ink); }
 
 /* Aquarelles des cocktails : fond blanc fondu dans le fond de la carte */
 .card-cocktail .pic img, .results img, .fiche-hero .pic img { mix-blend-mode: multiply; object-fit: contain; }
+
+/* Bascule Liste / Galerie */
+.vue { display: inline-flex; gap: 4px; margin-top: 14px; padding: 4px; border: 1px solid var(--line, #E7E1D6); border-radius: 999px; background: #fff; }
+.vue a { padding: 8px 18px; border-radius: 999px; font-weight: 500; font-size: 15px; color: var(--dark); text-decoration: none; }
+.vue a[aria-current="page"] { background: var(--dark); color: #fff; }
+.vue a:not([aria-current]):hover { background: #F3EEE4; }
+
+/* Galerie : toutes les aquarelles d'un coup */
+.galerie { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+.galerie a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 10px 16px; background: #fff; border: 1px solid var(--line, #E7E1D6); border-radius: 18px; text-decoration: none; color: var(--dark); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.galerie a:hover, .galerie a:focus-visible { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(29,27,24,.10); border-color: var(--gold); }
+.galerie img { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; }
+.galerie span { font-family: "Bebas Neue", Impact, sans-serif; font-size: 23px; letter-spacing: .5px; line-height: 1.05; text-align: center; }
+@media (max-width: 520px) { .galerie { grid-template-columns: repeat(2, 1fr); gap: 10px; } .galerie span { font-size: 20px; } }
+@media (prefers-reduced-motion: reduce) { .galerie a { transition: none; } .galerie a:hover { transform: none; } }
+.galerie a { height: 100%; box-sizing: border-box; }
