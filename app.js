@@ -76,6 +76,7 @@
   }
 
   var ICON_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+  var ICON_ECRAN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/></svg>';
   var ICON_NEXT = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
 
   function setNav(section) {
@@ -320,7 +321,8 @@
     var q = from ? "?de=" + from.s : "";
     app.innerHTML =
       '<div class="wrap">' + back +
-      '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display titre-embleme">' + embleme(c.s, "e-fiche") + "<span>" + esc(c.n) + '</span></h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p></div>" +
+      '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display titre-embleme">' + embleme(c.s, "e-fiche") + "<span>" + esc(c.n) + '</span></h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p>" +
+        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Présenter au tableau</button></div>" +
         '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="Illustration du cocktail ' + esc(c.n) + '"></div></section>' +
       '<div class="fiche-grid"><section class="block recette"><h2 class="h2">Recette</h2><ul>' + recette + "</ul>" +
         '<p class="order-note">Ingrédients dans l’ordre de la recette : du moins cher au plus cher.</p></section>' +
@@ -331,7 +333,85 @@
       '<nav class="prevnext" aria-label="Cocktail précédent ou suivant">' +
         '<a href="#/cocktail/' + prev.s + q + '">' + ICON_BACK + esc(prev.n) + "</a>" +
         '<a href="#/cocktail/' + next.s + q + '">' + esc(next.n) + ICON_NEXT + "</a></nav></div>";
+    document.getElementById("btnTableau").addEventListener("click", function () { ouvrirTableau(c, liste, q); });
   }
+
+  /* ---------- Mode tableau : la fiche en plein écran, tout visible d'un coup ---------- */
+  var tableau = null;
+  function contenuTableau(c) {
+    var recette = c.ing.map(function (i) {
+      return '<li><span class="d">' + esc(i[0] || "—") + '</span><span class="n">' + esc(i[1]) + "</span></li>";
+    }).join("");
+    var ident = [["Méthode", METHODES[c.m] + (c.outil ? " — " + c.outil : "")], ["TAV", c.tav + " %"], ["Catégorie", c.c], ["Type", c.t], ["Garniture", c.g]];
+    var vars = c.vars ? '<h3>' + (c.vars.length > 1 ? "Variantes" : "Variante") + "</h3><ul class=\"tb-vars\">" +
+      c.vars.map(function (v) { return "<li><b>" + esc(v[0]) + "</b> " + esc(v[1]) + "</li>"; }).join("") + "</ul>" : "";
+    return '<div class="tb-col tb-c1">' +
+        '<p class="tb-eyebrow">' + c.c + " · " + c.t + "</p>" +
+        '<h2 class="tb-nom">' + embleme(c.s, "e-tb") + "<span>" + esc(c.n) + "</span></h2>" +
+        '<p class="tb-profil">' + esc(c.p) + "</p>" +
+        '<div class="tb-pic"><img src="img/cocktails/' + c.s + '.jpg" alt=""></div>' +
+        '<p class="tb-histo">' + esc(c.h) + "</p></div>" +
+      '<div class="tb-col tb-c2"><h3>Recette</h3><ul class="tb-recette">' + recette + "</ul>" +
+        '<div class="tb-id"><div class="tb-verre"><img src="img/verres/' + c.v + '.jpg" alt=""><span><small>Verre</small><b>' + VERRES[c.v] + "</b></span></div><dl>" +
+        ident.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl></div></div>" +
+      '<div class="tb-col tb-c3"><h3>' + (c.techTitre || "Technique") + '</h3><ol class="tb-tech">' +
+        c.tech.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol>" +
+        (c.nb ? '<p class="tb-nb"><b>N.B. :</b> ' + esc(c.nb) + "</p>" : "") + vars + "</div>";
+  }
+  function ajusterTableau() {
+    if (!tableau) return;
+    var page = tableau.querySelector(".tb-page");
+    var u = Math.min(window.innerWidth / 92, window.innerHeight / 46);
+    page.style.fontSize = u + "px";
+    var cols = page.querySelectorAll(".tb-col");
+    function deborde() { for (var i = 0; i < cols.length; i++) if (cols[i].scrollHeight > cols[i].clientHeight + 1) return true; return false; }
+    var n = 0;
+    while (deborde() && n++ < 40) { u *= 0.95; page.style.fontSize = u + "px"; }
+  }
+  function afficherTableau(c) {
+    tableau.querySelector(".tb-page").innerHTML = contenuTableau(c);
+    tableau.dataset.slug = c.s;
+    var imgs = tableau.querySelectorAll("img"), reste = imgs.length;
+    ajusterTableau();
+    Array.prototype.forEach.call(imgs, function (im) { if (!im.complete) im.addEventListener("load", ajusterTableau, { once: true }); });
+  }
+  function fermerTableau() {
+    if (!tableau) return;
+    var slug = tableau.dataset.slug;
+    document.removeEventListener("keydown", toucheTableau);
+    window.removeEventListener("resize", ajusterTableau);
+    tableau.remove(); tableau = null;
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+    route();
+  }
+  var listeTableau = [], qTableau = "";
+  function toucheTableau(e) {
+    if (!tableau) return;
+    var i = listeTableau.indexOf(cocktail(tableau.dataset.slug));
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      var c = listeTableau[(i + (e.key === "ArrowRight" ? 1 : -1) + listeTableau.length) % listeTableau.length];
+      history.replaceState(null, "", "#/cocktail/" + c.s + qTableau);
+      afficherTableau(c);
+    } else if (e.key === "Escape" && !document.fullscreenElement) fermerTableau();
+  }
+  function ouvrirTableau(c, liste, q) {
+    listeTableau = liste; qTableau = q;
+    tableau = document.createElement("div");
+    tableau.className = "tableau";
+    tableau.setAttribute("role", "dialog");
+    tableau.setAttribute("aria-label", "Présentation au tableau");
+    tableau.innerHTML = '<div class="tb-barre"><span>← → changer de cocktail · Échap pour quitter</span>' +
+      '<button type="button" class="tb-fermer" aria-label="Quitter le mode tableau">✕</button></div><div class="tb-page"></div>';
+    document.body.appendChild(tableau);
+    tableau.querySelector(".tb-fermer").addEventListener("click", fermerTableau);
+    document.addEventListener("keydown", toucheTableau);
+    window.addEventListener("resize", ajusterTableau);
+    afficherTableau(c);
+    if (tableau.requestFullscreen) tableau.requestFullscreen().then(ajusterTableau).catch(function () {});
+    tableau.querySelector(".tb-fermer").focus();
+  }
+  document.addEventListener("fullscreenchange", function () { if (!document.fullscreenElement && tableau) fermerTableau(); else ajusterTableau(); });
 
   /* ---------- Connaissances ---------- */
   function viewSavoirs(rub) {

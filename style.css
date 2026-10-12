@@ -389,3 +389,44 @@ footer.site .signature span { display: inline-block; margin-top: 4px; letter-spa
 .e-carte { width: 36px; height: 36px; border-width: 1.5px; }
 .e-galerie { width: 40px; height: 40px; border-width: 1.5px; margin-top: 2px; }
 @media (max-width: 520px) { .e-fiche { border-width: 2px; } .e-galerie { width: 34px; height: 34px; } .e-carte { width: 30px; height: 30px; } }
+
+/* ---------- Mode tableau (ordinateur uniquement) ---------- */
+.btn-tableau { display: none; margin-top: 18px; align-items: center; gap: 10px; min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--dark); color: #fff; font: inherit; font-weight: 500; font-size: 15px; cursor: pointer; }
+.btn-tableau:hover { background: var(--gold); color: var(--dark); }
+@media (min-width: 1000px) and (hover: hover) { .btn-tableau { display: inline-flex; } }
+
+.tableau { position: fixed; inset: 0; z-index: 100; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: hidden; }
+.tb-barre { flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 16px; padding: 10px 18px 0; font-size: 13px; color: var(--muted); }
+.tb-fermer { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 16px; cursor: pointer; color: var(--dark); }
+.tb-fermer:hover { background: var(--dark); color: #fff; }
+.tb-page { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1.15fr 1.15fr; gap: 2.4em; padding: .6em 3em 2.2em; font-family: "DM Sans", system-ui, sans-serif; line-height: 1.35; }
+.tb-col { min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.tb-col h3 { margin: 0 0 .5em; font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; font-size: 2.3em; letter-spacing: .04em; line-height: 1; }
+.tb-eyebrow { margin: 0 0 .4em; font-size: .9em; letter-spacing: .22em; text-transform: uppercase; font-weight: 700; color: var(--gold-ink); }
+.tb-nom { margin: 0; display: flex; align-items: center; gap: .35em; font-family: "Bebas Neue", Impact, sans-serif; font-weight: 400; font-size: 4.6em; line-height: .9; letter-spacing: .01em; }
+.e-tb { width: 1em; height: 1em; border-width: .045em; }
+.tb-profil { margin: .45em 0 0; font-style: italic; font-size: 1.35em; color: var(--muted); }
+.tb-pic { flex: 1 1 auto; min-height: 6em; display: flex; justify-content: center; align-items: center; margin: .6em 0; }
+.tb-pic img { max-width: 100%; max-height: 100%; height: auto; mix-blend-mode: multiply; object-fit: contain; }
+.tb-histo { margin: 0; font-size: 1em; color: var(--muted); }
+.tb-recette { list-style: none; margin: 0 0 1em; padding: 0; }
+.tb-recette li { display: flex; align-items: baseline; gap: .7em; padding: .32em 0; border-bottom: 1px solid var(--line); }
+.tb-recette .d { flex: none; min-width: 4.4em; font-family: "Bebas Neue", Impact, sans-serif; font-size: 2em; line-height: 1; color: var(--gold); }
+.tb-recette .n { font-size: 1.45em; font-weight: 500; }
+.tb-id { margin-top: auto; background: var(--dark); color: #fff; border-radius: .9em; padding: 1em 1.2em; }
+.tb-verre { display: flex; align-items: center; gap: .8em; background: #fff; color: var(--dark); border-radius: .6em; padding: .4em .8em; margin-bottom: .8em; }
+.tb-verre img { height: 3.4em; width: auto; }
+.tb-verre small { display: block; font-size: .8em; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+.tb-verre b { font-size: 1.3em; }
+.tb-id dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .6em 1.2em; }
+.tb-id dl div:last-child { grid-column: 1 / -1; }
+.tb-id dt { font-size: .78em; letter-spacing: .15em; text-transform: uppercase; color: #CFC6B5; }
+.tb-id dd { margin: .1em 0 0; font-size: 1.2em; font-weight: 500; }
+.tb-tech { margin: 0; padding: 0; list-style: none; counter-reset: e; }
+.tb-tech li { counter-increment: e; position: relative; padding: .3em 0 .3em 2.3em; font-size: 1.3em; }
+.tb-tech li::before { content: counter(e); position: absolute; left: 0; top: .3em; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--gold); color: var(--dark); font-weight: 700; font-size: .85em; display: flex; align-items: center; justify-content: center; }
+.tb-nb { margin: .8em 0 0; padding: .6em .9em; background: #FBF3DD; border-left: .25em solid var(--gold); border-radius: .3em; font-size: 1.05em; }
+.tb-c3 h3:not(:first-child) { margin-top: .8em; }
+.tb-vars { margin: 0; padding: 0; list-style: none; }
+.tb-vars li { font-size: 1.05em; padding: .25em 0; color: var(--dark); }
+.tb-vars b { color: var(--gold-ink); }
