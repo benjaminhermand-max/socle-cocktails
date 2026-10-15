@@ -77,6 +77,82 @@
     });
   }
 
+  /* Liens automatiques vers les fiches d'alcools (pages alcool, hors Socle et connaissances).
+     Seule la première mention de chaque fiche est liée, pour ne pas surcharger le texte. */
+  var TERMES = [
+    ["Pineau des Charentes|Floc de Gascogne|Macvin du Jura|vins? de liqueur|V\\.D\\.L\\.?", "#/autre/vins-de-liqueur"],
+    ["vins? doux naturels?|V\\.D\\.N\\.?|Banyuls|Muscat de Frontignan|Muscat de Beaumes-de-Venise", "#/autre/vins-doux-naturels"],
+    ["quinquinas?|Dubonnet|St-Raphaël", "#/autre/quinquinas"],
+    ["gentianes?|Suze", "#/autre/gentianes"],
+    ["anisés?|pastis|Ricard", "#/autre/anises"],
+    ["armagnac", "#/autre/armagnac"],
+    ["calvados", "#/autre/calvados"],
+    ["cognac", "#/alcool/cognac"],
+    ["xérès|sherry", "#/alcool/xeres"],
+    ["vermouths?", "#/alcool/vermouth"],
+    ["cachaça", "#/alcool/cachaca"]
+  ];
+  var RE_TERMES = new RegExp("(?<![\\p{L}\\d])(" + TERMES.map(function (t) { return "(" + t[0] + ")"; }).join("|") + ")(?![\\p{L}\\d])", "giu");
+  function lierTermes(root, ici) {
+    if (!root) return;
+    var deja = {}; deja[ici] = true;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var el = n.parentElement;
+        if (!el || el.closest("a, h1, h2, h3, dt, th, button, input, label, textarea, [data-nolink], .tableau")) return NodeFilter.FILTER_REJECT;
+        RE_TERMES.lastIndex = 0;
+        return RE_TERMES.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var txt = n.nodeValue, frag = document.createDocumentFragment(), last = 0, m, lie = false;
+      RE_TERMES.lastIndex = 0;
+      while ((m = RE_TERMES.exec(txt))) {
+        var k = 0; for (var i = 0; i < TERMES.length; i++) if (m[i + 2] !== undefined) { k = i; break; }
+        var href = TERMES[k][1];
+        if (deja[href]) continue;
+        deja[href] = true;
+        frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        var a = document.createElement("a");
+        a.className = "ck"; a.href = href; a.textContent = m[1];
+        frag.appendChild(a); last = m.index + m[1].length; lie = true;
+      }
+      if (!lie) return;
+      frag.appendChild(document.createTextNode(txt.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    });
+  }
+
+  /* « Voir aussi » : fiches proches */
+  var VOIR = {
+    "alcool/xeres": ["autre/vins-de-liqueur", "autre/vins-doux-naturels"],
+    "alcool/cognac": ["autre/armagnac", "autre/calvados", "autre/vins-de-liqueur"],
+    "alcool/vermouth": ["autre/quinquinas", "autre/vins-de-liqueur"],
+    "alcool/bitter": ["autre/gentianes", "autre/quinquinas", "autre/anises"],
+    "alcool/rhum": ["alcool/cachaca"],
+    "alcool/cachaca": ["alcool/rhum"],
+    "alcool/whisky": ["alcool/cognac", "autre/armagnac"],
+    "alcool/liqueurs": ["autre/anises"],
+    "autre/quinquinas": ["alcool/vermouth", "alcool/bitter", "autre/gentianes"],
+    "autre/vins-de-liqueur": ["alcool/xeres", "autre/vins-doux-naturels", "alcool/cognac", "autre/armagnac"],
+    "autre/vins-doux-naturels": ["autre/vins-de-liqueur", "alcool/xeres"],
+    "autre/anises": ["autre/gentianes", "alcool/bitter"],
+    "autre/gentianes": ["alcool/bitter", "autre/quinquinas", "autre/anises"],
+    "autre/armagnac": ["alcool/cognac", "autre/calvados", "autre/vins-de-liqueur"],
+    "autre/calvados": ["alcool/cognac", "autre/armagnac"]
+  };
+  function voirAussi(cle) {
+    var l = VOIR[cle];
+    if (!l) return "";
+    return '<section class="voir-aussi"><h2 class="h2">Voir aussi</h2><div class="voir-grid">' + l.map(function (k) {
+      var p = k.split("/"), x = p[0] === "alcool" ? alcool(p[1]) : autre(p[1]);
+      if (!x) return "";
+      return '<a href="#/' + k + '"><img src="img/bouteilles/' + x.img + '" alt="" loading="lazy"><span><b>' + esc(x.n) + "</b><small>" + esc(x.famille) + "</small></span></a>";
+    }).join("") + "</div></section>";
+  }
+
   var ICON_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
   var ICON_ECRAN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/></svg>';
   var ICON_NEXT = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
@@ -99,9 +175,6 @@
         '<img src="img/bouteilles/' + a.img + '" alt="" loading="lazy"></div>' +
         '<div class="txt"><b>' + esc(a.n) + '</b><small>' + esc(a.famille) + '</small></div></a>';
     }).join("");
-    var tiles = RUBRIQUES.map(function (r, i) {
-      return '<a class="tile" href="#/savoirs/' + r[0] + '"><span class="num">0' + (i + 1) + '</span>' + r[1] + '</a>';
-    }).join("");
     app.innerHTML =
       '<section class="hero"><div class="wrap">' +
         '<div class="hero-text"><p class="eyebrow">Référentiel officiel · Édition 2025 · 36 cocktails</p>' +
@@ -112,29 +185,59 @@
       '</div></section>' +
       '<section class="section"><div class="wrap"><div class="section-head"><h2 class="display">Les alcools du Socle</h2><span class="muted">du plus utilisé au moins utilisé</span></div>' +
         '<div class="grid-alcools">' + cards + '</div></div></section>' +
-      '<section class="band" id="connaissances"><div class="wrap section"><p class="eyebrow">Avant de commencer</p><h2 class="display" style="font-size:44px;margin-bottom:24px">Les connaissances à maîtriser</h2>' +
-        '<div class="grid-savoirs">' + tiles + '</div></div></section>' +
       '<section class="section"><div class="wrap"><a class="cta-dark cta-autres" href="#/autres"><div><p class="eyebrow">Hors Socle</p><h2 class="display">Autres apéritifs &amp; digestifs</h2>' +
         '<p>Quinquinas, vins de liqueur, vins doux naturels, anisés, gentianes, armagnac, calvados : ' + AU.length + ' fiches pour compléter le Socle.</p>' +
         '<div class="cta-bouteilles" aria-hidden="true">' + AU.map(function (x) { return '<img src="img/bouteilles/' + x.img + '" alt="" loading="lazy">'; }).join("") + '</div></div>' +
         '<span class="pill-gold">Découvrir' + ICON_NEXT + '</span></a></div></section>';
   }
 
+  function scoreNom(n, v) {
+    n = norm(n);
+    if (n === v) return 0;
+    if (n.indexOf(v) === 0) return 1;
+    if (n.split(/[\s’'-]/).some(function (w) { return w.indexOf(v) === 0; })) return 2;
+    if (n.indexOf(v) !== -1) return 3;
+    return -1;
+  }
+  /* Recherche sur tout le site : cocktails, alcools, autres apéritifs & digestifs, connaissances, lexique. */
   function chercher(v) {
-    v = norm(v.trim().replace(/'/g, "’"));
+    var brut = v.trim();
+    v = norm(brut.replace(/'/g, "’"));
     if (v.length < 1) return [];
     var res = [];
+    function ajoute(score, rang, item) { if (score >= 0) res.push([score, rang, item]); }
     C.forEach(function (c) {
-      var n = norm(c.n), score = -1;
-      if (n === v) score = 0;
-      else if (n.indexOf(v) === 0) score = 1;
-      else if (n.split(/[\s’-]/).some(function (w) { return w.indexOf(v) === 0; })) score = 2;
-      else if (n.indexOf(v) !== -1) score = 3;
-      else if (v.length >= 3 && norm(c.ing.map(function (i) { return i[1]; }).join(" ")).indexOf(v) !== -1) score = 4;
-      else if (v.length >= 3 && norm(METHODES[c.m] + " " + (c.m === "melange" ? "melange stir" : c.m === "shaker" ? "frapper" : "direct au verre build") + " verre " + VERRES[c.v] + " " + c.c + " " + c.t + " " + c.g).indexOf(v) !== -1) score = 5;
-      if (score >= 0) res.push([score, c]);
+      var score = scoreNom(c.n, v), info = c.c + " · " + METHODES[c.m] + " · Verre " + VERRES[c.v];
+      if (score < 0 && v.length >= 3) {
+        var ing = c.ing.filter(function (x) { return norm(x[1]).indexOf(v) !== -1; })[0];
+        if (ing) { score = 4; info = "Contient : " + ing[0] + " " + ing[1].toLowerCase(); }
+        else if (norm(METHODES[c.m] + " " + (c.m === "melange" ? "melange stir" : c.m === "shaker" ? "frapper" : "direct au verre build") + " verre " + VERRES[c.v] + " " + c.c + " " + c.t + " " + c.g).indexOf(v) !== -1) { score = 5; info = METHODES[c.m] + " · Verre " + VERRES[c.v] + " · " + c.c; }
+      }
+      ajoute(score, 1, { n: c.n, href: "#/cocktail/" + c.s, img: "img/cocktails/" + c.s + ".jpg", info: info, type: "cocktail" });
     });
-    return res.sort(function (a, b) { return a[0] - b[0] || a[1].n.localeCompare(b[1].n, "fr"); }).map(function (x) { return x[1]; });
+    function alcools(liste, route, etiquette) {
+      liste.forEach(function (a) {
+        var score = Math.min.apply(null, [a.n, a.titre].map(function (x) { var k = scoreNom(x, v); return k < 0 ? 99 : k; }));
+        var info = etiquette + " · " + a.famille;
+        if (score === 99) {
+          score = -1;
+          if (v.length >= 3) {
+            var m = a.id.filter(function (r) { return /^Marque|Exemples/.test(r[0]) && norm(r[1].replace(/<[^>]+>/g, "")).indexOf(v) !== -1; })[0];
+            if (m) { score = 2; info = etiquette + " · " + m[0] + " : " + m[1].replace(/<[^>]+>/g, ""); }
+            else if (norm((a.intro + " " + a.id.map(function (r) { return r[1]; }).join(" ")).replace(/<[^>]+>/g, "")).indexOf(v) !== -1) score = 6;
+          }
+        }
+        ajoute(score, 0, { n: a.titre, href: route + a.s, img: "img/bouteilles/" + a.img, info: info, type: "alcool" });
+      });
+    }
+    alcools(A, "#/alcool/", "Alcool du Socle");
+    alcools(AU, "#/autre/", "Hors Socle");
+    RUBRIQUES.forEach(function (r) { ajoute(scoreNom(r[1], v), 2, { n: r[1], href: "#/savoirs/" + r[0], info: "Connaissances", type: "savoir" }); });
+    if (v.length >= 2) S.lexique.forEach(function (l) {
+      var k = scoreNom(l[0], v);
+      ajoute(k < 0 ? -1 : k + 1, 3, { n: l[0], href: "#/savoirs/lexique", info: "Lexique : " + l[1], type: "lexique" });
+    });
+    return res.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1] || a[2].n.localeCompare(b[2].n, "fr"); }).map(function (x) { return x[2]; }).slice(0, 40);
   }
 
   function initSearch() {
@@ -150,17 +253,11 @@
       hits = chercher(q.value);
       hint.textContent = "";
       if (!q.value.trim()) { res.innerHTML = ""; close(); return; }
-      res.innerHTML = hits.length ? hits.map(function (c, i) {
-        var v = norm(q.value.trim());
-        var viaNom = norm(c.n).indexOf(v) !== -1;
-        var ing = c.ing.filter(function (x) { return norm(x[1]).indexOf(v) !== -1; })[0];
-        var info = viaNom ? c.c + " · " + METHODES[c.m] + " · Verre " + VERRES[c.v]
-                 : ing ? "Contient : " + ing[0] + " " + ing[1].toLowerCase()
-                 : METHODES[c.m] + " · Verre " + VERRES[c.v] + " · " + c.c;
-        return '<li role="option" id="opt' + i + '"><a href="#/cocktail/' + c.s + '"><img src="img/cocktails/' + c.s + '.jpg" alt=""><span><b>' + esc(c.n) + '</b><small>' +
-          esc(info) + '</small></span></a></li>';
-      }).join("") : '<li class="muted" style="padding:10px 12px">Aucun cocktail trouvé. Vérifie l’orthographe.</li>';
-      if (hits.length > 1) res.insertAdjacentHTML("afterbegin", '<li class="res-count" aria-hidden="true">' + hits.length + ' cocktails</li>');
+      res.innerHTML = hits.length ? hits.map(function (h, i) {
+        var vis = h.img ? '<img src="' + h.img + '" alt="" class="r-' + h.type + '">' : '<span class="r-ico" aria-hidden="true">' + (h.type === "lexique" ? "Aa" : "§") + "</span>";
+        return '<li role="option" id="opt' + i + '"><a href="' + h.href + '">' + vis + "<span><b>" + esc(h.n) + "</b><small>" + esc(h.info) + "</small></span></a></li>";
+      }).join("") : '<li class="muted" style="padding:10px 12px">Aucun résultat. Vérifie l’orthographe.</li>';
+      if (hits.length > 1) res.insertAdjacentHTML("afterbegin", '<li class="res-count" aria-hidden="true">' + hits.length + ' résultats</li>');
       res.hidden = false; q.setAttribute("aria-expanded", "true"); cur = -1;
     }
     function mark() {
@@ -178,8 +275,8 @@
       e.preventDefault();
       var list = chercher(q.value);
       var c = cur >= 0 ? hits[cur] : list[0];
-      if (c) location.hash = "#/cocktail/" + c.s;
-      else hint.textContent = q.value.trim() ? "Aucun cocktail ne correspond à « " + q.value.trim() + " »." : "Tape le nom d’un cocktail.";
+      if (c) location.hash = c.href;
+      else hint.textContent = q.value.trim() ? "Aucun résultat pour « " + q.value.trim() + " »." : "Tape un cocktail, un alcool ou un ingrédient.";
     });
     document.addEventListener("click", function (e) { if (!f.contains(e.target)) close(); });
     window.fermerRecherche = function () { q.value = ""; hint.textContent = ""; res.innerHTML = ""; close(); q.blur(); };
@@ -230,7 +327,7 @@
         '<p class="intro">' + a.intro + "</p>" +
         '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
         '<aside class="id-card"><h2 class="display">Carte d’identité</h2><dl>' + id + "</dl></aside></div>" +
-      '<div class="sections">' + a.sec.map(renderSection).join("") + "</div></div>" +
+      '<div class="sections">' + a.sec.map(renderSection).join("") + "</div>" + voirAussi("alcool/" + a.s) + "</div>" +
       '<section class="band"><div class="wrap section">' +
         '<div class="cocktails-head"><div><p class="eyebrow">Dans le Socle</p><h2 class="display">' + pluriel(list.length, "cocktail") + "</h2></div>" +
         '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
@@ -287,7 +384,7 @@
         '<p class="intro">' + a.intro + "</p>" +
         '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
         '<aside class="id-card"><h2 class="display">Carte d’identité</h2><dl>' + id + "</dl></aside></div>" +
-      '<div class="sections">' + a.sec.map(renderSection).join("") + "</div></div>";
+      '<div class="sections">' + a.sec.map(renderSection).join("") + "</div>" + voirAussi("autre/" + a.s) + "</div>";
     document.getElementById("btnTableau").addEventListener("click", function () {
       ouvrirTableau({ liste: AU, courant: a, rendu: contenuTableauAlcool, classe: "tb-alcool", aide: "← → changer d’alcool",
         hash: function (x) { return "#/autre/" + x.s; } });
@@ -379,12 +476,90 @@
       '<div class="sections" style="padding-top:12px"><div><h2 class="h2">' + (c.techTitre || "Technique") + '</h2><ol class="technique">' +
         c.tech.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol>" +
         (c.nb ? '<p class="nb"><b>N.B. :</b> ' + esc(c.nb) + "</p>" : "") + "</div>" + vars + "</div>" +
+      blocCout(c) +
       '<nav class="prevnext" aria-label="Cocktail précédent ou suivant">' +
         '<a href="#/cocktail/' + prev.s + q + '">' + ICON_BACK + esc(prev.n) + "</a>" +
         '<a href="#/cocktail/' + next.s + q + '">' + esc(next.n) + ICON_NEXT + "</a></nav></div>";
+    initCout(c);
     document.getElementById("btnTableau").addEventListener("click", function () {
       ouvrirTableau({ liste: liste, courant: c, rendu: contenuTableau, hash: function (x) { return "#/cocktail/" + x.s + q; } });
     });
+  }
+
+  /* ---------- Coût matière et prix de vente ---------- */
+  var CLE_PRIX = "socle-prix-v1";
+  function lirePrix() { try { return JSON.parse(localStorage.getItem(CLE_PRIX) || "{}") || {}; } catch (e) { return {}; } }
+  function ecrirePrix(p) { try { localStorage.setItem(CLE_PRIX, JSON.stringify(p)); } catch (e) {} }
+  function euros(x) { return x.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }); }
+  function doseMl(d) { var m = /^(\d+(?:[.,]\d+)?)\s*ml$/i.exec((d || "").trim()); return m ? parseFloat(m[1].replace(",", ".")) : null; }
+  function contenanceDefaut(nom) {
+    var n = norm(nom);
+    if (/champagne|prosecco|vin /.test(n)) return 75;
+    if (/eau gazeuse|soda|ginger|tonic|cola|jus|nectar|puree|lait|creme fraiche/.test(n)) return 100;
+    return 70;
+  }
+  function blocCout(c) {
+    var lignes = c.ing.map(function (i, k) {
+      var ml = doseMl(i[0]);
+      var champ = ml !== null
+        ? '<label>Prix bouteille HT (€)<input type="number" min="0" step="0.01" inputmode="decimal" data-k="' + k + '" data-f="prix" placeholder="ex. 18"></label>' +
+          '<label>Contenance (cl)<input type="number" min="1" step="1" inputmode="decimal" data-k="' + k + '" data-f="cl" value="' + contenanceDefaut(i[1]) + '"></label>'
+        : '<label>Coût estimé (€)<input type="number" min="0" step="0.01" inputmode="decimal" data-k="' + k + '" data-f="fixe" placeholder="ex. 0,10"></label>';
+      return '<div class="cout-ligne"><div class="cout-nom"><b>' + esc(i[1]) + "</b><small>" + esc(i[0] || "Selon la recette") + "</small></div>" + champ +
+        '<output class="cout-val" id="cv' + k + '">—</output></div>';
+    }).join("");
+    lignes += '<div class="cout-ligne"><div class="cout-nom"><b>Garniture</b><small>' + esc(c.g) + '</small></div>' +
+      '<label>Coût estimé (€)<input type="number" min="0" step="0.01" inputmode="decimal" data-k="g" data-f="fixe" placeholder="ex. 0,15"></label><output class="cout-val" id="cvg">—</output></div>';
+    return '<details class="cout" id="cout"><summary><span>Coût matière et prix de vente</span><small>Calculer le prix de vente du ' + esc(c.n) + "</small></summary>" +
+      '<div class="cout-corps"><p class="muted cout-aide">Saisis le prix d’achat HT des bouteilles : le coût de chaque dose est calculé selon la recette. Les prix sont mémorisés sur cet appareil et repris dans tous les cocktails qui utilisent le même produit.</p>' +
+      lignes +
+      '<div class="cout-total"><div><span>Coût matière HT</span><b id="ctot">—</b></div>' +
+        '<label class="coef">Coefficient multiplicateur<input type="number" min="1" step="0.1" inputmode="decimal" id="ccoef" value="4"></label>' +
+        '<div><span>Prix de vente HT</span><b id="cht">—</b></div><div><span>TVA 20 %</span><b id="ctva">—</b></div>' +
+        '<div class="ttc"><span>Prix de vente TTC</span><b id="cttc">—</b></div></div>' +
+      '<p class="muted cout-formule">Coût d’une dose = dose (ml) ÷ contenance (ml) × prix de la bouteille · Prix de vente HT = coût matière × coefficient · Prix TTC = prix HT × 1,20</p></div></details>';
+  }
+  function initCout(c) {
+    var box = document.getElementById("cout");
+    if (!box) return;
+    var prix = lirePrix();
+    function cle(k, f) { var nom = k === "g" ? "garniture:" + c.s : norm(c.ing[k][1]); return nom + "|" + f; }
+    box.querySelectorAll("input[data-k]").forEach(function (inp) {
+      var v = prix[cle(inp.dataset.k, inp.dataset.f)];
+      if (v !== undefined && v !== "") inp.value = v;
+    });
+    var coef = document.getElementById("ccoef");
+    if (prix["coef"]) coef.value = prix["coef"];
+    function num(x) { var n = parseFloat(String(x).replace(",", ".")); return isNaN(n) ? null : n; }
+    function calc() {
+      var tot = 0, complet = true;
+      c.ing.forEach(function (i, k) {
+        var out = document.getElementById("cv" + k), ml = doseMl(i[0]), cout = null;
+        if (ml !== null) {
+          var p = num(box.querySelector('[data-k="' + k + '"][data-f="prix"]').value), cl = num(box.querySelector('[data-k="' + k + '"][data-f="cl"]').value);
+          if (p !== null && cl) cout = ml / (cl * 10) * p;
+        } else {
+          var f = num(box.querySelector('[data-k="' + k + '"][data-f="fixe"]').value);
+          cout = f === null ? 0 : f;
+        }
+        if (cout === null) { complet = false; out.textContent = "—"; } else { tot += cout; out.textContent = euros(cout); }
+      });
+      var g = num(box.querySelector('[data-k="g"]').value) || 0;
+      document.getElementById("cvg").textContent = euros(g); tot += g;
+      var k2 = num(coef.value) || 0, ht = tot * k2;
+      document.getElementById("ctot").textContent = euros(tot) + (complet ? "" : " *");
+      document.getElementById("cht").textContent = euros(ht);
+      document.getElementById("ctva").textContent = euros(ht * 0.2);
+      document.getElementById("cttc").textContent = euros(ht * 1.2);
+      box.classList.toggle("incomplet", !complet);
+    }
+    box.addEventListener("input", function (e) {
+      var t = e.target;
+      if (t.dataset.k !== undefined) prix[cle(t.dataset.k, t.dataset.f)] = t.value;
+      if (t === coef) prix["coef"] = t.value;
+      ecrirePrix(prix); calc();
+    });
+    calc();
   }
 
   /* ---------- Mode tableau : la fiche en plein écran, tout visible d'un coup ---------- */
@@ -645,6 +820,7 @@
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
     lierCocktails(app, path[0] === "cocktail" ? path[1] : null);
+    if (path[0] === "alcool" || path[0] === "autre" || path[0] === "savoirs") lierTermes(app.querySelector(".alc-hero, .savoirs") ? app : null, "#/" + path[0] + "/" + (path[1] || ""));
     if (window.fermerRecherche) window.fermerRecherche();
     window.scrollTo(0, 0);
     var h1 = app.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
