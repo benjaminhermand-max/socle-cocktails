@@ -547,3 +547,31 @@ a.cta-autres:hover, a.cta-autres:focus-visible { transform: translateY(-2px); bo
   .cout-ligne:has(> label:only-of-type) label { grid-column: 1 / 2; }
   .cout-val { grid-column: 2; align-self: end; }
 }
+
+/* Outils */
+.outil { margin-top: 24px; max-width: 920px; }
+.outil .formula { margin: 18px 0 22px; }
+.outil-choix { display: flex; flex-direction: column; gap: 6px; margin: 0 0 18px; font-size: 13px; font-weight: 700; letter-spacing: .5px; color: var(--gold-ink); max-width: 420px; }
+.outil-choix select { font: inherit; font-size: 16px; font-weight: 500; color: var(--dark); padding: 11px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.outil-note { margin-top: 10px; font-size: 14px; }
+.cout-outil summary { display: none; }
+.cout-outil .cout-corps { padding-top: 20px; }
+.cout-libre { grid-template-columns: minmax(140px, 1.5fr) 0.8fr 1fr 0.9fr 80px 36px; }
+.cout-libre .rm { align-self: end; margin-bottom: 4px; }
+.cout .add { margin: 12px 0 4px; }
+.btn-outil { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--dark); color: #fff; text-decoration: none; font-weight: 500; }
+.btn-outil:hover { background: var(--gold); color: var(--dark); }
+@media (max-width: 640px) {
+  .cout-libre { grid-template-columns: 1fr 1fr; }
+  .cout-libre > label:first-child { grid-column: 1 / -1; }
+  .cout-libre .rm { grid-column: 2; justify-self: end; }
+}
+.nav-c { display: none; }
+@media (max-width: 520px) {
+  .nav-l { display: none; } .nav-c { display: inline; }
+  .nav { justify-content: space-between; }
+  .nav a { padding: 8px 11px; }
+}
+@media (max-width: 380px) { .nav a { padding: 8px 7px; font-size: 13px; } .nav { gap: 0; } }
+.cout .add { padding: 10px 16px; min-height: 44px; border-radius: 999px; border: 1px dashed var(--gold-ink); background: transparent; color: var(--gold-ink); font: inherit; font-weight: 700; cursor: pointer; }
+.cout .rm { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font: inherit; cursor: pointer; }

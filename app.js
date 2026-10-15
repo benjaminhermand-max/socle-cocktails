@@ -486,6 +486,112 @@
     });
   }
 
+  /* ---------- Outils ---------- */
+  function choixCocktail(id, libre) {
+    return '<label class="outil-choix" for="' + id + '">Partir d’un cocktail du Socle<select id="' + id + '"><option value="">' + libre + "</option>" +
+      C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); }).map(function (c) { return '<option value="' + c.s + '">' + esc(c.n) + "</option>"; }).join("") + "</select></label>";
+  }
+  function viewOutils(t) {
+    t = t === "prix" ? "prix" : "tav";
+    setNav("outils");
+    document.title = (t === "tav" ? "Calcul du TAV" : "Prix de vente") + " — Outils — Socle des Cocktails";
+    var bascule = '<nav class="vue" aria-label="Outils"><a href="#/outils/tav"' + (t === "tav" ? ' aria-current="page"' : "") + '>Calcul du TAV</a>' +
+      '<a href="#/outils/prix"' + (t === "prix" ? ' aria-current="page"' : "") + ">Prix de vente</a></nav>";
+    var corps = t === "tav"
+      ? '<p class="lead-autres">Le titre alcoométrique volumique (TAV) indique le pourcentage d’alcool pur dans le cocktail.</p>' +
+        '<div class="formula"><span class="big">TAV = Σ (volume × degré) ÷ volume total</span></div>' +
+        choixCocktail("outck", "Exemple : Americano") +
+        '<div class="calc"><div id="rows"></div><button type="button" class="add" id="add">+ Ajouter un ingrédient</button>' +
+        '<div class="calc-out" aria-live="polite"><span>Volume total : <b id="vol" style="font-size:28px">0</b> ml</span><span>TAV : <b id="tav">0 %</b></span><span class="muted" id="arr"></span></div></div>' +
+        '<p class="muted outil-note" id="outnote"></p>'
+      : '<p class="lead-autres">Calcule le coût matière d’un cocktail, puis son prix de vente HT et TTC avec un coefficient multiplicateur.</p>' +
+        choixCocktail("outck", "Recette libre") + '<div id="outprix"></div>';
+    app.innerHTML = '<div class="wrap section"><p class="eyebrow">Outils</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">' +
+      (t === "tav" ? "Calcul du TAV" : "Prix de vente") + "</h1>" + bascule + '<div class="outil">' + corps + "</div></div>";
+    var sel = document.getElementById("outck");
+    if (t === "tav") {
+      initCalc();
+      sel.addEventListener("change", function () {
+        var c = cocktail(sel.value);
+        var d = c ? c.ing.filter(function (i) { return doseMl(i[0]) !== null; }).map(function (i) { return [i[1], doseMl(i[0]), 0]; }) : null;
+        initCalcRemplace(d);
+        document.getElementById("outnote").textContent = c ? "Les volumes du " + c.n + " sont repris de la recette (les ingrédients sans dose en ml ne comptent pas). Complète le degré de chaque ingrédient." : "";
+      });
+    } else {
+      function rendre() {
+        var c = cocktail(sel.value), box = document.getElementById("outprix");
+        if (c) { box.innerHTML = blocCout(c); var d = document.getElementById("cout"); d.open = true; d.classList.add("cout-outil"); initCout(c); }
+        else { box.innerHTML = blocCoutLibre(); initCoutLibre(); }
+      }
+      sel.addEventListener("change", rendre);
+      rendre();
+    }
+  }
+  function initCalcRemplace(d) {
+    var old = document.getElementById("rows"), neu = old.cloneNode(false);
+    old.parentNode.replaceChild(neu, old);
+    var add = document.getElementById("add"), add2 = add.cloneNode(true);
+    add.parentNode.replaceChild(add2, add);
+    initCalc(d || undefined);
+  }
+  function blocCoutLibre() {
+    return '<div class="cout cout-outil"><div class="cout-corps" style="padding-top:20px"><p class="muted cout-aide">Ajoute les ingrédients de ta recette. Les prix déjà saisis pour un produit du même nom sont repris automatiquement.</p>' +
+      '<div id="lrows"></div><button type="button" class="add" id="ladd">+ Ajouter un ingrédient</button>' +
+      '<div class="cout-ligne"><div class="cout-nom"><b>Garniture et autres</b><small>Coût estimé</small></div><label>Coût estimé (€)<input type="number" min="0" step="0.01" inputmode="decimal" id="lgarn" placeholder="ex. 0,15"></label><output class="cout-val" id="lgv">—</output></div>' +
+      '<div class="cout-total"><div><span>Coût matière HT</span><b id="ctot">—</b></div>' +
+      '<label class="coef">Coefficient multiplicateur<input type="number" min="1" step="0.1" inputmode="decimal" id="ccoef" value="4"></label>' +
+      '<div><span>Prix de vente HT</span><b id="cht">—</b></div><div><span>TVA 20 %</span><b id="ctva">—</b></div>' +
+      '<div class="ttc"><span>Prix de vente TTC</span><b id="cttc">—</b></div></div>' +
+      '<p class="muted cout-formule">Coût d’une dose = dose (ml) ÷ contenance (ml) × prix de la bouteille · Prix de vente HT = coût matière × coefficient · Prix TTC = prix HT × 1,20</p></div></div>';
+  }
+  function initCoutLibre() {
+    var prix = lirePrix(), rows = document.getElementById("lrows"), coef = document.getElementById("ccoef");
+    if (prix.coef) coef.value = prix.coef;
+    var data = [["", 40, "", 70]];
+    function num(x) { var n = parseFloat(String(x).replace(",", ".")); return isNaN(n) ? null : n; }
+    function draw() {
+      rows.innerHTML = data.map(function (d, i) {
+        return '<div class="cout-ligne cout-libre"><label>Ingrédient<input data-i="' + i + '" data-k="0" value="' + esc(d[0]) + '" placeholder="ex. Gin"></label>' +
+          '<label>Dose (ml)<input type="number" min="0" step="1" inputmode="decimal" data-i="' + i + '" data-k="1" value="' + d[1] + '"></label>' +
+          '<label>Prix bouteille HT (€)<input type="number" min="0" step="0.01" inputmode="decimal" data-i="' + i + '" data-k="2" value="' + d[2] + '" placeholder="ex. 18"></label>' +
+          '<label>Contenance (cl)<input type="number" min="1" step="1" inputmode="decimal" data-i="' + i + '" data-k="3" value="' + d[3] + '"></label>' +
+          '<output class="cout-val" id="lv' + i + '">—</output><button type="button" class="rm" data-rm="' + i + '" aria-label="Retirer cet ingrédient">×</button></div>';
+      }).join("");
+      calc();
+    }
+    function calc() {
+      var tot = 0;
+      data.forEach(function (d, i) {
+        var dose = num(d[1]), p = num(d[2]), cl = num(d[3]), out = document.getElementById("lv" + i);
+        if (dose !== null && p !== null && cl) { var v = dose / (cl * 10) * p; tot += v; out.textContent = euros(v); } else out.textContent = "—";
+      });
+      var g = num(document.getElementById("lgarn").value) || 0; tot += g;
+      document.getElementById("lgv").textContent = euros(g);
+      var ht = tot * (num(coef.value) || 0);
+      document.getElementById("ctot").textContent = euros(tot);
+      document.getElementById("cht").textContent = euros(ht);
+      document.getElementById("ctva").textContent = euros(ht * 0.2);
+      document.getElementById("cttc").textContent = euros(ht * 1.2);
+    }
+    rows.addEventListener("input", function (e) {
+      var t = e.target; if (t.dataset.i === undefined) return;
+      var d = data[+t.dataset.i]; d[+t.dataset.k] = t.value;
+      var cle = norm(d[0]);
+      if (+t.dataset.k === 0 && cle) {
+        // nom reconnu : on reprend le prix et la contenance mémorisés
+        if (prix[cle + "|prix"] && !d[2]) { d[2] = prix[cle + "|prix"]; rows.querySelector('[data-i="' + t.dataset.i + '"][data-k="2"]').value = d[2]; }
+        if (prix[cle + "|cl"]) { d[3] = prix[cle + "|cl"]; rows.querySelector('[data-i="' + t.dataset.i + '"][data-k="3"]').value = d[3]; }
+      }
+      if (cle && (+t.dataset.k === 2 || +t.dataset.k === 3)) { prix[cle + "|" + (+t.dataset.k === 2 ? "prix" : "cl")] = t.value; ecrirePrix(prix); }
+      calc();
+    });
+    rows.addEventListener("click", function (e) { var b = e.target.closest("[data-rm]"); if (!b) return; data.splice(+b.dataset.rm, 1); draw(); });
+    document.getElementById("ladd").addEventListener("click", function () { data.push(["", 0, "", 70]); draw(); });
+    document.getElementById("lgarn").addEventListener("input", calc);
+    coef.addEventListener("input", function () { prix.coef = coef.value; ecrirePrix(prix); calc(); });
+    draw();
+  }
+
   /* ---------- Coût matière et prix de vente ---------- */
   var CLE_PRIX = "socle-prix-v1";
   function lirePrix() { try { return JSON.parse(localStorage.getItem(CLE_PRIX) || "{}") || {}; } catch (e) { return {}; } }
@@ -689,13 +795,12 @@
     app.innerHTML = '<div class="wrap"><div class="savoirs"><aside><p class="eyebrow">Connaissances</p><nav aria-label="Rubriques"><ul>' + menu + '</ul></nav></aside>' +
       '<div class="content"><h1 class="display">' + r[1] + "</h1>" + html +
       '<p><button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></p></div></div></div>";
-    if (r[0] === "tav") initCalc();
     if (r[0] === "lexique") initLexique();
     document.getElementById("btnTableau").addEventListener("click", function () {
       app.innerHTML = "";
       ouvrirTableau({ liste: RUBRIQUES, courant: r, classe: "tb-savoir", aide: "← → changer de rubrique", zoom: true,
         rendu: function (x) { return '<div class="tb-zoom"><p class="tb-eyebrow">Connaissances</p><h2 class="tb-titre">' + x[1] + "</h2>" + htmlSavoir(x) + "</div>"; },
-        apres: function (x) { if (x[0] === "tav") initCalc(); if (x[0] === "lexique") initLexique(); },
+        apres: function (x) { if (x[0] === "lexique") initLexique(); },
         hash: function (x) { return "#/savoirs/" + x[0]; } });
     });
   }
@@ -746,8 +851,7 @@
       case "tav":
         html = '<p class="lead">Le titre alcoométrique volumique (TAV) indique le pourcentage d’alcool pur dans le cocktail. Il aide à proposer une offre adaptée à une consommation responsable.</p>' +
           '<div class="formula"><span class="big">TAV = Σ (volume × degré) ÷ volume total</span><p style="margin:10px 0 0;color:#D9D3C7">Exemple de l’Americano : (20 × 14,5) + (50 × 25) + (50 × 0) = 1 540. 1 540 ÷ 120 ml = 12,83, soit un <b style="color:#fff">TAV de 13 %</b>.</p></div>' +
-          '<div class="calc"><h2 class="h2">Calculer le TAV d’un cocktail</h2><div id="rows"></div><button type="button" class="add" id="add">+ Ajouter un ingrédient</button>' +
-          '<div class="calc-out" aria-live="polite"><span>Volume total : <b id="vol" style="font-size:28px">0</b> ml</span><span>TAV : <b id="tav">0 %</b></span><span class="muted" id="arr"></span></div></div>';
+          '<p style="margin-top:22px"><a class="btn-outil" href="#/outils/tav">Ouvrir le calculateur de TAV' + ICON_NEXT + '</a></p>';
         break;
       case "lexique":
         html = '<p class="lead">Le vocabulaire professionnel du bar, de A à Z.</p>' +
@@ -758,9 +862,9 @@
     return html;
   }
 
-  function initCalc() {
+  function initCalc(depart) {
     var rows = document.getElementById("rows");
-    var data = [["Vermouth rouge", 20, 14.5], ["Bitter", 50, 25], ["Eau gazeuse", 50, 0]];
+    var data = depart || [["Vermouth rouge", 20, 14.5], ["Bitter", 50, 25], ["Eau gazeuse", 50, 0]];
     function draw() {
       rows.innerHTML = data.map(function (d, i) {
         return '<div class="calc-row"><div class="nm"><label for="n' + i + '">Ingrédient</label><input id="n' + i + '" data-i="' + i + '" data-k="0" value="' + esc(d[0]) + '"></div>' +
@@ -816,6 +920,7 @@
     else if (path[0] === "cocktails") viewCocktails();
     else if (path[0] === "galerie") viewGalerie();
     else if (path[0] === "autres") viewAutres();
+    else if (path[0] === "outils") viewOutils(path[1]);
     else if (path[0] === "autre") viewAutre(path[1]);
     else if (path[0] === "savoirs") viewSavoirs(path[1]);
     else viewIntrouvable();
