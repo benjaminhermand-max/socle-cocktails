@@ -259,7 +259,7 @@
     function bloc(g, titre, texte) {
       return '<section class="autres-groupe"><h2 class="display">' + titre + '</h2><p class="muted">' + texte + '</p><div class="autres-grid">' +
         AU.filter(function (x) { return x.groupe === g; }).map(function (x) {
-          return '<a class="carte-autre" href="#/autre/' + x.s + '">' + embleme("x-" + x.s, "e-autre") + "<span><b>" + esc(x.n) + "</b><small>" + esc(x.famille) + "</small></span></a>";
+          return '<a class="carte-autre" href="#/autre/' + x.s + '"><img src="img/bouteilles/' + x.img + '" alt="" loading="lazy"><span><b>' + esc(x.n) + "</b><small>" + esc(x.famille) + "</small></span></a>";
         }).join("") + "</div></section>";
     }
     app.innerHTML = '<div class="wrap section"><p class="eyebrow">Hors Socle</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Autres apéritifs & digestifs</h1>' +
@@ -276,7 +276,7 @@
     app.innerHTML =
       '<div class="wrap"><a class="back" href="#/autres">' + ICON_BACK + "Autres apéritifs & digestifs</a>" +
       '<div class="alc-hero"><div class="alc-main"><p class="eyebrow">' + esc(a.famille) + "</p>" +
-        '<div class="alc-title titre-embleme"><h1 class="display">' + esc(a.titre) + "</h1>" + embleme("x-" + a.s, "e-autre-grand") + "</div>" +
+        '<div class="alc-title"><h1 class="display">' + esc(a.titre) + '</h1><img src="img/bouteilles/' + a.img + '" alt="Bouteille : ' + esc(a.n) + '"></div>' +
         '<p class="intro">' + a.intro + "</p>" +
         '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
         '<aside class="id-card"><h2 class="display">Carte d’identité</h2><dl>' + id + "</dl></aside></div>" +
@@ -473,7 +473,7 @@
   /* Plein écran d'un alcool */
   function contenuTableauAlcool(a) {
     var id = a.id.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("");
-    var cks = (a.img ? cocktailsDe(a.s) : []).map(function (c) { return "<li>" + esc(c.n) + "</li>"; }).join("");
+    var cks = (alcool(a.s) ? cocktailsDe(a.s) : []).map(function (c) { return "<li>" + esc(c.n) + "</li>"; }).join("");
     var secs = a.sec.map(function (sec) {
       var body = "";
       if (sec.steps) body = '<ol class="tb-tech">' + sec.steps.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ol>";

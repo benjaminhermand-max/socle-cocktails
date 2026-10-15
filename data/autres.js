@@ -1,7 +1,7 @@
 /* Autres apéritifs & digestifs (hors Socle) — d'après les cours de culture professionnelle (apéritifs 01 à 04, digestifs). */
 window.AUTRES = [
 {
-  s: "quinquinas", n: "Quinquinas", titre: "Les Quinquinas", groupe: "aperitif",
+  s: "quinquinas", img: "x-quinquinas.png", n: "Quinquinas", titre: "Les Quinquinas", groupe: "aperitif",
   famille: "Apéritif à base de vin (A.B.V.)",
   intro: "Vin apéritif aromatisé de diverses plantes, dont traditionnellement l’écorce de quinquina : l’arbre dont on tirait la quinine, la « plante miracle » contre la malaria (paludisme).",
   id: [["Famille", "Apéritif à base de vin (A.B.V.)"], ["Base", "Vin blanc, vin rouge ou mistelle"], ["Aromates", "Écorce de quinquina, écorce d’orange, vanille, cacao, café"], ["Degré", "Environ 15 % vol."], ["Marques commerciales", "Dubonnet, St-Raphaël"]],
@@ -11,7 +11,7 @@ window.AUTRES = [
   ]
 },
 {
-  s: "vins-de-liqueur", n: "Vins de liqueur", titre: "Les Vins de liqueur", groupe: "aperitif",
+  s: "vins-de-liqueur", img: "x-vins-de-liqueur.png", n: "Vins de liqueur", titre: "Les Vins de liqueur", groupe: "aperitif",
   famille: "Apéritif à base de vin (A.B.V.) — V.D.L.",
   intro: "Les vins de liqueur (V.D.L.) sont des vins mutés en début de fermentation avec une eau-de-vie. Le sucre du raisin est conservé : ils sont doux et titrent entre 15 et 22 % vol.",
   id: [["Famille", "Apéritif à base de vin (A.B.V.)"], ["Matière première", "Moût de raisin"], ["Mutage", "En début de fermentation, avec une eau-de-vie"], ["Degré", "15 à 22 % vol."], ["Exemples", "Pineau des Charentes, Floc de Gascogne, Macvin du Jura, Porto, Xérès"]],
@@ -21,7 +21,7 @@ window.AUTRES = [
   ]
 },
 {
-  s: "vins-doux-naturels", n: "Vins doux naturels", titre: "Les Vins doux naturels", groupe: "aperitif",
+  s: "vins-doux-naturels", img: "x-vins-doux-naturels.png", n: "Vins doux naturels", titre: "Les Vins doux naturels", groupe: "aperitif",
   famille: "Apéritif à base de vin (A.B.V.) — V.D.N.",
   intro: "Riches en sucre et en alcool, les vins doux naturels (V.D.N.) sont des vins mutés pendant la fermentation. Ils sont majoritairement produits dans le Languedoc-Roussillon.",
   id: [["Famille", "Apéritif à base de vin (A.B.V.)"], ["Matière première", "Raisin (souvent muscat ou grenache)"], ["Mutage", "Pendant la fermentation, avec de l’alcool neutre"], ["Région principale", "Languedoc-Roussillon"], ["Exemples", "Muscat de Frontignan, Muscat de Beaumes-de-Venise, Banyuls"]],
@@ -31,7 +31,7 @@ window.AUTRES = [
   ]
 },
 {
-  s: "anises", n: "Anisés", titre: "Les Anisés", groupe: "aperitif",
+  s: "anises", img: "x-anises.png", n: "Anisés", titre: "Les Anisés", groupe: "aperitif",
   famille: "Apéritif à base d’alcool (A.B.A.)",
   intro: "Les anisés sont des apéritifs qui se caractérisent par l’ajout d’extraits d’anis vert, d’anis étoilé (badiane) ou de fenouil. En France, ils sont associés à Marseille et au pastis.",
   id: [["Famille", "Apéritif à base d’alcool (A.B.A.)"], ["Base", "Alcool neutre à 96 % vol."], ["Aromates", "Anis vert, badiane, fenouil, réglisse"], ["Origine", "Marseille (pastis), Grèce (ouzo)"], ["Marques commerciales", "Ricard, 51, Berger Blanc, Ouzo — Pacifique (sans alcool)"]],
@@ -41,17 +41,17 @@ window.AUTRES = [
   ]
 },
 {
-  s: "gentianes", n: "Gentianes", titre: "Les Gentianes", groupe: "aperitif",
+  s: "gentianes", img: "x-gentianes.png", n: "Gentianes", titre: "Les Gentianes", groupe: "aperitif",
   famille: "Apéritif à base d’alcool (A.B.A.)",
   intro: "Les gentianes sont des apéritifs produits à partir des racines de gentiane jaune, une plante de montagne à fleurs jaunes dont la racine apporte une saveur amère.",
   id: [["Famille", "Apéritif à base d’alcool (A.B.A.)"], ["Base", "Alcool neutre à 96 % vol."], ["Aromate", "Racines de gentiane jaune"], ["Origine", "Montagnes françaises (Massif central, Jura, Alpes)"], ["Marques commerciales", "Suze, Salers, Avèze"]],
   sec: [
     { t: "Fabrication", steps: ["On récolte les racines de gentiane jaune.", "On les fait macérer dans de l’alcool neutre à 96 % vol., entre 3 et 9 mois.", "On filtre, puis on ajoute du sucre et de l’eau pour ramener le degré."] },
-    { t: "Bon à savoir", text: "La Suze est produite depuis 1885. C’est la gentiane la plus connue en France ; son amertume en fait un apéritif apprécié pur ou allongé de tonic." }
+    { t: "Bon à savoir", text: "La Suze a été créée en 1885 et est commercialisée depuis 1889 (date inscrite sur la bouteille). C’est la gentiane la plus connue en France ; son amertume en fait un apéritif apprécié pur ou allongé de tonic." }
   ]
 },
 {
-  s: "armagnac", n: "Armagnac", titre: "L’Armagnac", groupe: "digestif",
+  s: "armagnac", img: "x-armagnac.png", n: "Armagnac", titre: "L’Armagnac", groupe: "digestif",
   famille: "Digestif — eau-de-vie de vin",
   intro: "L’armagnac est une eau-de-vie de vin produite en Gascogne. C’est la plus ancienne eau-de-vie de France : distillée puis vieillie en fût de chêne, elle développe des arômes fruités, boisés et épicés.",
   id: [["Famille", "Digestif — eau-de-vie de vin"], ["Matière première", "Vin blanc (cépages ugni blanc, baco, folle blanche, colombard)"], ["Origine", "Gascogne (AOC Armagnac)"], ["Degré", "40 % vol. minimum"], ["Marques commerciales", "Bas-Armagnac Delord, Laubade"]],
@@ -61,7 +61,7 @@ window.AUTRES = [
   ]
 },
 {
-  s: "calvados", n: "Calvados", titre: "Le Calvados", groupe: "digestif",
+  s: "calvados", img: "x-calvados.png", n: "Calvados", titre: "Le Calvados", groupe: "digestif",
   famille: "Digestif — eau-de-vie de cidre",
   intro: "Le calvados est une eau-de-vie de cidre produite en Normandie, à partir de pommes (et de poires pour certaines appellations). Vieilli en fût de chêne, il offre des notes fraîches et fruitées.",
   id: [["Famille", "Digestif — eau-de-vie de cidre"], ["Matière première", "Cidre de pommes (et de poires)"], ["Origine", "Normandie (AOC Calvados)"], ["Degré", "40 % vol. minimum"], ["Marque commerciale", "Busnel"]],
