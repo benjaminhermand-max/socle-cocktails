@@ -491,3 +491,14 @@ footer.site .signature span { display: inline-block; margin-top: 4px; letter-spa
 .alc-title img { max-width: 40%; object-fit: contain; object-position: bottom; }
 @media (max-width: 520px) { .alc-title img { height: 150px; } }
 @media (max-width: 520px) { .alc-title h1 { font-size: clamp(44px, 14vw, 64px); min-width: 0; } }
+
+/* Accueil : lien vers les autres apéritifs & digestifs */
+a.cta-autres { text-decoration: none; color: inherit; transition: transform .18s ease, box-shadow .18s ease; }
+a.cta-autres:hover, a.cta-autres:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(29,27,24,.18); }
+.cta-autres .eyebrow { color: var(--gold); margin-bottom: 6px; }
+.cta-autres .pill-gold { gap: 8px; flex: none; }
+.cta-bouteilles { display: flex; align-items: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.cta-bouteilles img { height: 84px; width: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
+@media (max-width: 520px) { .cta-bouteilles img { height: 60px; } }
+@media (prefers-reduced-motion: reduce) { a.cta-autres { transition: none; } a.cta-autres:hover { transform: none; } }
+.cta-dark h2 { color: #fff; }

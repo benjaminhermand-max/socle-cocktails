@@ -114,8 +114,10 @@
         '<div class="grid-alcools">' + cards + '</div></div></section>' +
       '<section class="band" id="connaissances"><div class="wrap section"><p class="eyebrow">Avant de commencer</p><h2 class="display" style="font-size:44px;margin-bottom:24px">Les connaissances à maîtriser</h2>' +
         '<div class="grid-savoirs">' + tiles + '</div></div></section>' +
-      '<section class="section"><div class="wrap"><div class="cta-dark"><div><h2 class="display">Autres apéritifs &amp; digestifs</h2>' +
-        '<p>Anisés, quinquinas, gentianes, vins doux naturels, armagnac, calvados… Cette rubrique arrive bientôt.</p></div><span class="pill-gold">Bientôt</span></div></div></section>';
+      '<section class="section"><div class="wrap"><a class="cta-dark cta-autres" href="#/autres"><div><p class="eyebrow">Hors Socle</p><h2 class="display">Autres apéritifs &amp; digestifs</h2>' +
+        '<p>Quinquinas, vins de liqueur, vins doux naturels, anisés, gentianes, armagnac, calvados : ' + AU.length + ' fiches pour compléter le Socle.</p>' +
+        '<div class="cta-bouteilles" aria-hidden="true">' + AU.map(function (x) { return '<img src="img/bouteilles/' + x.img + '" alt="" loading="lazy">'; }).join("") + '</div></div>' +
+        '<span class="pill-gold">Découvrir' + ICON_NEXT + '</span></a></div></section>';
   }
 
   function chercher(v) {
@@ -265,7 +267,12 @@
     app.innerHTML = '<div class="wrap section"><p class="eyebrow">Hors Socle</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Autres apéritifs & digestifs</h1>' +
       '<p class="lead-autres">Les autres familles vues en culture professionnelle, en complément des alcools du Socle.</p>' +
       bloc("aperitif", "Les apéritifs", "Servis avant le repas : apéritifs à base de vin (A.B.V.) et à base d’alcool (A.B.A.).") +
-      bloc("digestif", "Les digestifs", "Servis en fin de repas : les eaux-de-vie.") + "</div>";
+      bloc("digestif", "Les digestifs", "Servis en fin de repas : les eaux-de-vie.") +
+      '<p style="margin-top:28px"><button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Présenter les " + AU.length + " fiches en plein écran</button></p></div>";
+    document.getElementById("btnTableau").addEventListener("click", function () {
+      ouvrirTableau({ liste: AU, courant: AU[0], rendu: contenuTableauAlcool, classe: "tb-alcool", aide: "← → changer d’alcool",
+        hash: function (x) { return "#/autre/" + x.s; } });
+    });
   }
   function viewAutre(slug) {
     var a = autre(slug);
