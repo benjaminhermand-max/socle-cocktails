@@ -299,6 +299,27 @@
     return '<span class="embleme ' + (cls || "") + '" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + e + "</svg></span>";
   }
 
+  /* ---------- Favoris (mémorisés sur l'appareil) ---------- */
+  var CLE_FAV = "socle-favoris-v1";
+  function lireFav() { try { var l = JSON.parse(localStorage.getItem(CLE_FAV) || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+  function estFav(s) { return lireFav().indexOf(s) !== -1; }
+  function basculerFav(s) {
+    var l = lireFav(), i = l.indexOf(s);
+    if (i === -1) l.push(s); else l.splice(i, 1);
+    try { localStorage.setItem(CLE_FAV, JSON.stringify(l)); } catch (e) {}
+    return i === -1;
+  }
+  var ICON_ETOILE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-2.9-5.4 2.9 1.1-6-4.5-4.2 6.1-.8z"/></svg>';
+  function marqueFav(c) { return estFav(c.s) ? '<span class="fav-marque" title="Dans mes favoris">' + ICON_ETOILE + '<span class="sr-only">Favori</span></span>' : ""; }
+  function filtresCocktails() {
+    var n = lireFav().length;
+    return '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
+      ["Tous", "Short drink", "Long drink"].map(function (f, i) { return '<button type="button" data-f="' + f + '" aria-pressed="' + (i === 0) + '">' + f + "</button>"; }).join("") +
+      '<button type="button" data-f="Favoris" aria-pressed="false" class="f-fav">' + ICON_ETOILE + "Favoris" + (n ? " (" + n + ")" : "") + "</button></div>";
+  }
+  function filtreOk(c, f) { return f === "Tous" || (f === "Favoris" ? estFav(c.s) : c.c === f); }
+  var VIDE_FAV = '<p class="muted vide-fav">Aucun favori pour l’instant. Ouvre une fiche et touche l’étoile « Ajouter aux favoris » pour la retrouver ici.</p>';
+
   function carteCocktail(c, slug) {
     var ings = c.ing.map(function (i) {
       var hl = slug && i[2] === slug;
@@ -308,7 +329,7 @@
     return '<a class="card-cocktail" href="#/cocktail/' + c.s + (slug ? "?de=" + slug : "") + '">' +
       '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"></div>' +
       '<div class="body"><div><div class="meta"><span class="cat">' + c.c + '</span><span class="muted">TAV ' + c.tav + ' %</span></div>' +
-      "<h3>" + esc(c.n) + '</h3><p class="profil">' + esc(c.p) + "</p></div>" +
+      "<h3>" + esc(c.n) + marqueFav(c) + '</h3><p class="profil">' + esc(c.p) + "</p></div>" +
       '<ul class="ings">' + ings + "</ul>" +
       '<div class="chips">' + badge + '<span class="chip">' + METHODES[c.m] + '</span><span class="chip">Verre ' + VERRES[c.v] + "</span></div></div></a>";
   }
@@ -397,11 +418,10 @@
     document.title = "Les 36 cocktails — Socle des Cocktails";
     var sorted = C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); });
     app.innerHTML = '<div class="wrap section"><div class="cocktails-head"><div><p class="eyebrow">Socle des Cocktails de Référence</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Les 36 cocktails</h1>' + basculeVue("liste") + '</div>' +
-      '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
-      ["Tous", "Short drink", "Long drink"].map(function (f, i) { return '<button type="button" data-f="' + f + '" aria-pressed="' + (i === 0) + '">' + f + "</button>"; }).join("") +
-      '</div></div><div class="grid-cocktails" id="liste"></div></div>';
+      filtresCocktails() + '</div><div class="grid-cocktails" id="liste"></div>' +
+      '<p class="entr-lien"><a class="btn-outil" href="#/outils/entrainement">S’entraîner sur les cocktails' + ICON_NEXT + "</a></p></div>";
     var grid = document.getElementById("liste");
-    function draw(f) { grid.innerHTML = sorted.filter(function (c) { return f === "Tous" || c.c === f; }).map(function (c) { return carteCocktail(c, null); }).join(""); }
+    function draw(f) { grid.innerHTML = sorted.filter(function (c) { return filtreOk(c, f); }).map(function (c) { return carteCocktail(c, null); }).join("") || VIDE_FAV; }
     draw("Tous");
     app.querySelectorAll(".filters button").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -423,14 +443,12 @@
     var sorted = C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); });
     app.innerHTML = '<div class="wrap section"><div class="cocktails-head"><div><p class="eyebrow">Socle des Cocktails de Référence</p>' +
       '<h1 class="display" style="font-size:clamp(52px,8vw,92px)">La galerie</h1>' + basculeVue("galerie") + '</div>' +
-      '<div class="filters" role="group" aria-label="Filtrer les cocktails">' +
-      ["Tous", "Short drink", "Long drink"].map(function (f, i) { return '<button type="button" data-f="' + f + '" aria-pressed="' + (i === 0) + '">' + f + "</button>"; }).join("") +
-      '</div></div><ul class="galerie" id="liste" data-nolink></ul></div>';
+      filtresCocktails() + '</div><ul class="galerie" id="liste" data-nolink></ul></div>';
     var grid = document.getElementById("liste");
     function draw(f) {
-      grid.innerHTML = sorted.filter(function (c) { return f === "Tous" || c.c === f; }).map(function (c) {
-        return '<li><a href="#/cocktail/' + c.s + '?de=galerie"><img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"><span>' + esc(c.n) + "</span></a></li>";
-      }).join("");
+      grid.innerHTML = sorted.filter(function (c) { return filtreOk(c, f); }).map(function (c) {
+        return '<li><a href="#/cocktail/' + c.s + '?de=galerie">' + marqueFav(c) + '<img src="img/cocktails/' + c.s + '.jpg" alt="" loading="lazy"><span>' + esc(c.n) + "</span></a></li>";
+      }).join("") || '<li class="vide-li">' + VIDE_FAV + "</li>";
     }
     draw("Tous");
     app.querySelectorAll(".filters button").forEach(function (b) {
@@ -468,7 +486,8 @@
     app.innerHTML =
       '<div class="wrap">' + back +
       '<section class="fiche-hero"><div class="txt"><p class="eyebrow">' + c.c + " · " + c.t + '</p><h1 class="display titre-embleme">' + embleme(c.s, "e-fiche") + "<span>" + esc(c.n) + '</span></h1><p class="profil">' + esc(c.p) + '</p><p class="histo">' + esc(c.h) + "</p>" +
-        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div>" +
+        '<div class="fiche-actions"><button type="button" class="btn-fav" id="btnFav" aria-pressed="' + estFav(c.s) + '">' + ICON_ETOILE + '<span>' + (estFav(c.s) ? "Dans mes favoris" : "Ajouter aux favoris") + "</span></button>" +
+        '<button type="button" class="btn-tableau" id="btnTableau">' + ICON_ECRAN + "Afficher en plein écran</button></div></div>" +
         '<div class="pic"><img src="img/cocktails/' + c.s + '.jpg" alt="Illustration du cocktail ' + esc(c.n) + '"></div></section>' +
       '<div class="fiche-grid"><section class="block recette"><h2 class="h2">Recette</h2><ul>' + recette + "</ul>" +
         '<p class="order-note">Ingrédients dans l’ordre de la recette : du moins cher au plus cher.</p></section>' +
@@ -481,6 +500,12 @@
         '<a href="#/cocktail/' + prev.s + q + '">' + ICON_BACK + esc(prev.n) + "</a>" +
         '<a href="#/cocktail/' + next.s + q + '">' + esc(next.n) + ICON_NEXT + "</a></nav></div>";
     initCout(c);
+    var bf = document.getElementById("btnFav");
+    bf.addEventListener("click", function () {
+      var on = basculerFav(c.s);
+      bf.setAttribute("aria-pressed", String(on));
+      bf.querySelector("span").textContent = on ? "Dans mes favoris" : "Ajouter aux favoris";
+    });
     document.getElementById("btnTableau").addEventListener("click", function () {
       ouvrirTableau({ liste: liste, courant: c, rendu: contenuTableau, hash: function (x) { return "#/cocktail/" + x.s + q; } });
     });
@@ -491,12 +516,17 @@
     return '<label class="outil-choix" for="' + id + '">Partir d’un cocktail du Socle<select id="' + id + '"><option value="">' + libre + "</option>" +
       C.slice().sort(function (x, y) { return x.n.localeCompare(y.n, "fr"); }).map(function (c) { return '<option value="' + c.s + '">' + esc(c.n) + "</option>"; }).join("") + "</select></label>";
   }
+  function basculeOutils(t) {
+    return '<nav class="vue vue-outils" aria-label="Outils"><a href="#/outils/entrainement"' + (t === "entrainement" ? ' aria-current="page"' : "") + '>Entraînement</a>' +
+      '<a href="#/outils/tav"' + (t === "tav" ? ' aria-current="page"' : "") + '>Calcul du TAV</a>' +
+      '<a href="#/outils/prix"' + (t === "prix" ? ' aria-current="page"' : "") + ">Prix de vente</a></nav>";
+  }
   function viewOutils(t) {
+    if (t === "entrainement") return viewEntrainement();
     t = t === "prix" ? "prix" : "tav";
     setNav("outils");
     document.title = (t === "tav" ? "Calcul du TAV" : "Prix de vente") + " — Outils — Socle des Cocktails";
-    var bascule = '<nav class="vue" aria-label="Outils"><a href="#/outils/tav"' + (t === "tav" ? ' aria-current="page"' : "") + '>Calcul du TAV</a>' +
-      '<a href="#/outils/prix"' + (t === "prix" ? ' aria-current="page"' : "") + ">Prix de vente</a></nav>";
+    var bascule = basculeOutils(t);
     var corps = t === "tav"
       ? '<p class="lead-autres">Le titre alcoométrique volumique (TAV) indique le pourcentage d’alcool pur dans le cocktail.</p>' +
         '<div class="formula"><span class="big">TAV = Σ (volume × degré) ÷ volume total</span></div>' +
@@ -590,6 +620,136 @@
     document.getElementById("lgarn").addEventListener("input", calc);
     coef.addEventListener("input", function () { prix.coef = coef.value; ecrirePrix(prix); calc(); });
     draw();
+  }
+
+  /* ---------- Entraînement ---------- */
+  var MODES_ENTR = [
+    { id: "image", titre: "Reconnaître", texte: "Une aquarelle, quatre noms : retrouve le cocktail." },
+    { id: "fiche", titre: "Fiche technique", texte: "Verre, méthode, garniture, alcool de base, catégorie, type." },
+    { id: "doses", titre: "Les doses", texte: "Retrouve la bonne dose d’un ingrédient dans la recette." },
+    { id: "mix", titre: "Tout mélangé", texte: "Un peu de tout, pour réviser avant l’évaluation." }
+  ];
+  var CLE_SCORE = "socle-entrainement-v1";
+  function lireScores() { try { return JSON.parse(localStorage.getItem(CLE_SCORE) || "{}") || {}; } catch (e) { return {}; } }
+  function melanger(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function choix4(bonne, pool) {
+    var autres = melanger(pool.filter(function (x, i) { return x && norm(x) !== norm(bonne) && pool.indexOf(x) === i; })).slice(0, 3);
+    return melanger([bonne].concat(autres));
+  }
+  function questionPour(c, mode) {
+    if (mode === "mix") mode = ["image", "fiche", "fiche", "doses"][Math.floor(Math.random() * 4)];
+    if (mode === "image") {
+      return { c: c, type: "image", q: "Quel est ce cocktail ?", bonne: c.n, choix: choix4(c.n, C.map(function (x) { return x.n; })),
+        expl: c.c + " · " + METHODES[c.m] + " · Verre " + VERRES[c.v] };
+    }
+    if (mode === "doses") {
+      var ings = c.ing.filter(function (i) { return doseMl(i[0]) !== null; });
+      if (ings.length) {
+        var ing = ings[Math.floor(Math.random() * ings.length)], ml = doseMl(ing[0]);
+        var pool = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100].filter(function (x) { return x !== ml && Math.abs(x - ml) <= Math.max(25, ml); });
+        return { c: c, type: "doses", q: "Quelle dose de " + ing[1].toLowerCase() + " dans le " + c.n + " ?", bonne: ml + " ml",
+          choix: choix4(ml + " ml", melanger(pool).map(function (x) { return x + " ml"; })),
+          expl: "Recette : " + c.ing.map(function (i) { return (i[0] ? i[0] + " " : "") + i[1].toLowerCase(); }).join(", ") + "." };
+      }
+    }
+    var types = [
+      ["Dans quel verre sert-on le " + c.n + " ?", "Verre " + VERRES[c.v], C.map(function (x) { return "Verre " + VERRES[x.v]; }).concat(Object.keys(VERRES).map(function (k) { return "Verre " + VERRES[k]; }))],
+      ["Quelle est la méthode de réalisation du " + c.n + " ?", METHODES[c.m], Object.keys(METHODES).map(function (k) { return METHODES[k]; }).concat(["Blender"])],
+      ["Quelle est la garniture du " + c.n + " ?", c.g, C.map(function (x) { return x.g; })],
+      ["Quel est l’alcool de base du " + c.n + " ?", alcool(c.base) ? alcool(c.base).n : "", A.map(function (x) { return x.n; })],
+      ["Le " + c.n + " est-il un short drink ou un long drink ?", c.c, ["Short drink", "Long drink"]],
+      ["À quel moment sert-on le " + c.n + " ?", c.t, ["All day cocktail", "Before dinner", "After dinner"]]
+    ].filter(function (x) { return x[1]; });
+    var k = types[Math.floor(Math.random() * types.length)];
+    var ch = k[2].length <= 3 ? k[2].filter(function (x, i) { return k[2].indexOf(x) === i; }) : choix4(k[1], k[2]);
+    return { c: c, type: "fiche", q: k[0], bonne: k[1], choix: ch, expl: c.c + " · " + c.t + " · " + METHODES[c.m] + " · Verre " + VERRES[c.v] + " · Garniture : " + c.g.toLowerCase() };
+  }
+  function viewEntrainement() {
+    setNav("outils");
+    document.title = "Entraînement — Outils — Socle des Cocktails";
+    var reglage = { mode: "image", scope: "Tous", nb: 10 };
+    var serie = [], pos = 0, score = 0, erreurs = [], repondu = false;
+    app.innerHTML = '<div class="wrap section"><p class="eyebrow">Outils</p><h1 class="display" style="font-size:clamp(52px,8vw,92px)">Entraînement</h1>' +
+      basculeOutils("entrainement") + '<div class="entr" id="entr" aria-live="polite"></div></div>';
+    var zone = document.getElementById("entr");
+    function cocktailsChoisis() { return C.filter(function (c) { return filtreOk(c, reglage.scope); }); }
+    function accueil() {
+      var sc = lireScores(), nf = lireFav().length;
+      zone.innerHTML = '<p class="lead-autres">Choisis un mode, puis teste-toi sur les 36 cocktails du Socle ou seulement sur tes favoris.</p>' +
+        '<div class="entr-modes" role="radiogroup" aria-label="Mode">' + MODES_ENTR.map(function (m) {
+          var b = sc[m.id];
+          return '<button type="button" role="radio" class="entr-mode" data-m="' + m.id + '" aria-checked="' + (m.id === reglage.mode) + '"><b>' + m.titre + "</b><span>" + m.texte + "</span>" +
+            (b ? '<small>Meilleur score : ' + b.s + " / " + b.n + "</small>" : "") + "</button>";
+        }).join("") + "</div>" +
+        '<div class="entr-reglages"><div class="filters" role="group" aria-label="Cocktails">' +
+          ["Tous", "Short drink", "Long drink", "Favoris"].map(function (f) {
+            return '<button type="button" data-scope="' + f + '" aria-pressed="' + (f === reglage.scope) + '"' + (f === "Favoris" && !nf ? " disabled" : "") + ">" + (f === "Favoris" ? "Mes favoris (" + nf + ")" : f) + "</button>";
+          }).join("") + '</div><div class="filters" role="group" aria-label="Nombre de questions">' +
+          [10, 20].map(function (n) { return '<button type="button" data-nb="' + n + '" aria-pressed="' + (n === reglage.nb) + '">' + n + " questions</button>"; }).join("") +
+        '</div></div><p><button type="button" class="btn-go" id="go">Commencer</button></p>';
+      zone.querySelectorAll("[data-m]").forEach(function (b) { b.addEventListener("click", function () { reglage.mode = b.dataset.m; accueil(); }); });
+      zone.querySelectorAll("[data-scope]").forEach(function (b) { b.addEventListener("click", function () { reglage.scope = b.dataset.scope; accueil(); }); });
+      zone.querySelectorAll("[data-nb]").forEach(function (b) { b.addEventListener("click", function () { reglage.nb = +b.dataset.nb; accueil(); }); });
+      document.getElementById("go").addEventListener("click", function () { lancer(); });
+    }
+    function lancer(liste) {
+      var pool = liste || cocktailsChoisis();
+      if (!pool.length) pool = C;
+      var tirage = [];
+      while (tirage.length < (liste ? liste.length : reglage.nb)) tirage = tirage.concat(melanger(pool));
+      serie = tirage.slice(0, liste ? liste.length : reglage.nb).map(function (c) { return questionPour(c, reglage.mode); });
+      pos = 0; score = 0; erreurs = [];
+      poser();
+    }
+    function poser() {
+      var q = serie[pos]; repondu = false;
+      zone.innerHTML = '<div class="entr-haut"><span>Question ' + (pos + 1) + " / " + serie.length + '</span><span>Score : ' + score + '</span><button type="button" class="entr-stop" id="stop">Arrêter</button></div>' +
+        '<div class="entr-barre" aria-hidden="true"><span style="width:' + Math.round(pos / serie.length * 100) + '%"></span></div>' +
+        '<div class="entr-q">' + (q.type === "image" ? '<img class="entr-img" src="img/cocktails/' + q.c.s + '.jpg" alt="Aquarelle du cocktail à retrouver">' :
+          '<img class="entr-img petit" src="img/cocktails/' + q.c.s + '.jpg" alt="">') +
+        "<h2>" + esc(q.q) + '</h2><div class="entr-choix">' + q.choix.map(function (x, i) {
+          return '<button type="button" data-i="' + i + '"><span class="k">' + (i + 1) + "</span>" + esc(x) + "</button>";
+        }).join("") + '</div><div id="retour"></div></div>';
+      document.getElementById("stop").addEventListener("click", accueil);
+      zone.querySelectorAll(".entr-choix button").forEach(function (b) { b.addEventListener("click", function () { repondre(+b.dataset.i); }); });
+      var h = zone.querySelector("h2"); h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true });
+    }
+    function repondre(i) {
+      if (repondu) return; repondu = true;
+      var q = serie[pos], ok = norm(q.choix[i]) === norm(q.bonne);
+      if (ok) score++; else erreurs.push(q);
+      zone.querySelectorAll(".entr-choix button").forEach(function (b, k) {
+        b.disabled = true;
+        if (norm(q.choix[k]) === norm(q.bonne)) b.classList.add("bon");
+        else if (k === i) b.classList.add("faux");
+      });
+      document.getElementById("retour").innerHTML = '<div class="entr-retour ' + (ok ? "ok" : "ko") + '"><b>' + (ok ? "Bonne réponse !" : "Raté : c’était « " + esc(q.bonne) + " ».") + "</b>" +
+        "<p>" + esc(q.expl) + '</p><div class="entr-btns"><a href="#/cocktail/' + q.c.s + '" target="_blank" rel="noopener">Voir la fiche du ' + esc(q.c.n) + "</a>" +
+        '<button type="button" class="btn-go" id="suiv">' + (pos + 1 < serie.length ? "Question suivante" : "Voir mon résultat") + "</button></div></div>";
+      var sv = document.getElementById("suiv"); sv.focus();
+      sv.addEventListener("click", function () { pos++; if (pos < serie.length) poser(); else resultat(); });
+    }
+    function resultat() {
+      var n = serie.length, pct = score / n;
+      var sc = lireScores(), b = sc[reglage.mode];
+      if (!b || score / n > b.s / b.n) { sc[reglage.mode] = { s: score, n: n }; try { localStorage.setItem(CLE_SCORE, JSON.stringify(sc)); } catch (e) {} }
+      var msg = pct === 1 ? "Parfait, rien à redire !" : pct >= .8 ? "Très bien, tu maîtrises !" : pct >= .5 ? "Pas mal : encore un peu de révision." : "Courage : revois les fiches et recommence.";
+      var vus = {};
+      zone.innerHTML = '<div class="entr-fin"><p class="eyebrow">Résultat</p><div class="entr-score"><b>' + score + "</b><span>/ " + n + "</span></div><p class=\"entr-msg\">" + msg + "</p>" +
+        (erreurs.length ? '<h2 class="h2">À revoir</h2><ul class="entr-erreurs">' + erreurs.filter(function (q) { if (vus[q.c.s]) return false; vus[q.c.s] = 1; return true; }).map(function (q) {
+          return '<li><a href="#/cocktail/' + q.c.s + '"><img src="img/cocktails/' + q.c.s + '.jpg" alt=""><span><b>' + esc(q.c.n) + "</b><small>" + esc(q.q) + " → " + esc(q.bonne) + "</small></span></a></li>";
+        }).join("") + "</ul>" : "") +
+        '<div class="entr-btns">' + (erreurs.length ? '<button type="button" class="btn-go" id="revoir">Rejouer mes erreurs</button>' : "") +
+        '<button type="button" class="btn-go sec" id="rejouer">Nouvelle série</button><button type="button" class="btn-go sec" id="menu">Changer de mode</button></div></div>';
+      var r = document.getElementById("revoir");
+      if (r) r.addEventListener("click", function () { lancer(erreurs.map(function (q) { return q.c; })); });
+      document.getElementById("rejouer").addEventListener("click", function () { lancer(); });
+      document.getElementById("menu").addEventListener("click", accueil);
+    }
+    zone.addEventListener("keydown", function (e) {
+      if (/^[1-4]$/.test(e.key) && !repondu) { var b = zone.querySelector('.entr-choix [data-i="' + (+e.key - 1) + '"]'); if (b) { e.preventDefault(); repondre(+e.key - 1); } }
+    });
+    accueil();
   }
 
   /* ---------- Coût matière et prix de vente ---------- */
@@ -927,7 +1087,8 @@
     lierCocktails(app, path[0] === "cocktail" ? path[1] : null);
     if (path[0] === "alcool" || path[0] === "autre" || path[0] === "savoirs") lierTermes(app.querySelector(".alc-hero, .savoirs") ? app : null, "#/" + path[0] + "/" + (path[1] || ""));
     if (window.fermerRecherche) window.fermerRecherche();
-    window.scrollTo(0, 0);
+    app.classList.remove("entree"); void app.offsetWidth; app.classList.add("entree");
+    window.scrollTo({ top: 0, behavior: "instant" });
     var h1 = app.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
   }
   window.addEventListener("hashchange", route);
