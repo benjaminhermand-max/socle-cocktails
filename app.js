@@ -1088,9 +1088,28 @@
     if (path[0] === "alcool" || path[0] === "autre" || path[0] === "savoirs") lierTermes(app.querySelector(".alc-hero, .savoirs") ? app : null, "#/" + path[0] + "/" + (path[1] || ""));
     if (window.fermerRecherche) window.fermerRecherche();
     app.classList.remove("entree"); void app.offsetWidth; app.classList.add("entree");
-    window.scrollTo({ top: 0, behavior: "instant" });
+    // Retour arrière : on revient exactement où l'on était ; nouvelle page : en haut.
+    var st0 = history.state, y = st0 && st0.h === location.hash && typeof st0.y === "number" ? st0.y : 0;
+    window.scrollTo({ top: y, behavior: "instant" });
+    if (y) { requestAnimationFrame(function () { window.scrollTo({ top: y, behavior: "instant" }); }); setTimeout(function () { if (Math.abs(window.scrollY - y) > 4) window.scrollTo({ top: y, behavior: "instant" }); }, 250); }
     var h1 = app.querySelector("h1"); if (h1) { h1.setAttribute("tabindex", "-1"); h1.focus({ preventScroll: true }); }
   }
+  /* Mémorise la position de défilement de chaque page dans l'historique */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  function memoriser() {
+    try { history.replaceState({ y: Math.round(window.scrollY), h: location.hash }, ""); } catch (e) {}
+  }
+  var memoPos = 0;
+  window.addEventListener("scroll", function () {
+    if (memoPos) clearTimeout(memoPos);
+    var h = location.hash;
+    memoPos = setTimeout(function () { memoPos = 0; if (location.hash === h) memoriser(); }, 120);
+  }, { passive: true });
+  // Juste avant de quitter la page par un lien : on note la position exacte.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href^='#']");
+    if (a) { if (memoPos) { clearTimeout(memoPos); memoPos = 0; } memoriser(); }
+  }, true);
   window.addEventListener("hashchange", route);
   initSearch();
   route();
