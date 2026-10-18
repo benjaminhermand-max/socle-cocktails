@@ -57,6 +57,8 @@ window.AUTRES = [
   id: [["Famille", "Digestif — eau-de-vie de vin"], ["Matière première", "Vin blanc (cépages ugni blanc, baco, folle blanche, colombard)"], ["Origine", "Gascogne (AOC Armagnac)"], ["Degré", "40 % vol. minimum"], ["Marques commerciales", "Bas-Armagnac Delord, Laubade"]],
   sec: [
     { t: "Fabrication", steps: ["On produit un vin blanc à partir des cépages de Gascogne.", "On le distille, le plus souvent en alambic armagnacais (distillation continue).", "L’eau-de-vie vieillit en fût de chêne, qui lui apporte arômes et couleur ambrée."] },
+    { t: "Les mentions d’âge : VS, VSOP, XO…", table: [["Mention", "Signification", "Âge minimum"], ["VS ou ***", "Very Special", "1 an"], ["VSOP", "Very Superior Old Pale", "4 ans"], ["Napoléon", "Entre le VSOP et le XO", "6 ans"], ["XO", "Extra Old", "10 ans"], ["Hors d’âge", "Très vieil assemblage", "10 ans"], ["Millésime", "Une seule récolte, année indiquée", "Selon l’année"]] },
+    { t: "Comment lire la mention ?", text: "Comme pour le cognac, l’âge indiqué est celui de l’eau-de-vie <b>la plus jeune</b> de l’assemblage, comptée en fût de chêne. Différence à retenir : un VS d’armagnac peut sortir après <b>1 an</b>, contre 2 ans pour un VS de cognac. L’armagnac est aussi réputé pour ses <b>millésimes</b>, issus d’une seule année de récolte." },
     { t: "Les trois terroirs", list: ["<b>Bas-Armagnac</b> : le plus réputé, aux eaux-de-vie fines et fruitées.", "<b>Ténarèze</b> : des eaux-de-vie plus corsées, qui gagnent à vieillir.", "<b>Haut-Armagnac</b> : le plus petit vignoble."] }
   ]
 },

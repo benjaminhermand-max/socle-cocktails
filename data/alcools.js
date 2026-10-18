@@ -70,6 +70,8 @@ window.ALCOOLS = [
   sec: [
     { t: "Fabrication", steps: ["On distille le vin une première fois dans un alambic charentais (à repasse) : on obtient le <b>brouillis</b>, à environ 30 % vol.", "On le distille une seconde fois, c’est la <b>bonne chauffe</b> : une eau-de-vie à environ 72 % vol.", "Vieillissement en fût de chêne, au moins 2 ans avant la commercialisation."] },
     { t: "Les trois grandes eaux-de-vie françaises", table: [["Eau-de-vie", "Terroir", "Matière première", "Distillation"], ["Cognac", "Charentes", "Vin (Ugni blanc)", "Double, alambic charentais"], ["Armagnac", "Gascogne", "Vin (Ugni blanc)", "Unique, alambic à colonne"], ["Calvados", "Normandie", "Cidre (pommes, parfois poires)", "Alambic charentais ou à colonne"]] },
+    { t: "Les mentions d’âge : VS, VSOP, XO…", table: [["Mention", "Signification", "Âge minimum"], ["VS ou ***", "Very Special", "2 ans"], ["VSOP", "Very Superior Old Pale", "4 ans"], ["Napoléon", "Entre le VSOP et le XO", "6 ans"], ["XO ou Hors d’âge", "Extra Old", "10 ans"], ["XXO", "Extra Extra Old", "14 ans"]] },
+    { t: "Comment lire la mention ?", text: "L’âge indiqué est celui de l’eau-de-vie <b>la plus jeune</b> de l’assemblage : un XO contient souvent des eaux-de-vie bien plus vieilles que 10 ans. Les années se comptent en fût de chêne, à partir du 1<sup>er</sup> avril qui suit la vendange (le « compte d’âge »). Seul un cognac <b>millésimé</b> indique son année exacte." },
     { t: "Bon à savoir", text: "Le Mint Julep peut aussi se faire au cognac : c’est l’une des deux eaux-de-vie de la recette originelle." }
   ]
 },
