@@ -611,31 +611,31 @@ a.cta-autres:hover, a.cta-autres:focus-visible { transform: translateY(-2px); bo
 }
 
 
-/* ---------- Mode sombre automatique ---------- */
-@media (prefers-color-scheme: dark) {
-  :root {
+/* ---------- Mode sombre (Auto / Clair / Sombre, réglé par data-theme sur <html>) ---------- */
+/* thème sombre */
+  :root[data-theme="dark"] {
     --bg: #151310; --surface: #221F1B; --line: #3A352E; --line-soft: #2D2924;
     --ink: #F2EDE4; --muted: #B7AFA2; --gold: #E0B23A; --gold-ink: #E6BC52; --gold-soft: #3A3020;
     --panel: #2C2823; --pill: #F2EDE4; --pill-ink: #151310; --paper: #FFFFFF;
     color-scheme: dark;
   }
   /* Les aquarelles gardent leur papier clair : tuile arrondie au lieu du fondu */
-  .card-cocktail .pic img, .results img:not(.r-alcool), .fiche-hero .pic img, .galerie img, .tb-pic img:not(.tb-bouteille img), .hero-media video {
+  [data-theme="dark"] .card-cocktail .pic img, [data-theme="dark"] .results img:not(.r-alcool), [data-theme="dark"] .fiche-hero .pic img, [data-theme="dark"] .galerie img, [data-theme="dark"] .tb-pic img:not(.tb-bouteille img), [data-theme="dark"] .hero-media video {
     mix-blend-mode: normal; background: var(--paper); border-radius: 14px;
   }
-  .tb-bouteille img { background: none; }
-  .card-alcool .pic { background: linear-gradient(180deg, #2A2621 0%, var(--surface) 100%); }
-  .identite .verre, .tb-verre { background: var(--paper); color: #1D1B18; }
-  .identite .verre small, .identite .verre span { color: #1D1B18; }
-  .topbar { border-bottom-color: var(--line); }
-  .bubble { border-color: var(--line); }
-  .search input, .lex-search, .cout input, .calc input, .outil-choix select { color: var(--ink); background: var(--bg); }
-  .cout-total .coef input { background: var(--surface); }
-  .three-s div, .formula, .identite, .cta-dark, .tb-id, .cout-total { border: 1px solid var(--line); }
-  img[src*="img/verres/"], img[src*="img/materiel/"] { background: var(--paper); border-radius: 10px; }
-  .glass img { padding: 4px; }
-  .carte-autre img, .voir-grid img, .cta-bouteilles img { filter: drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
-}
+  [data-theme="dark"] .tb-bouteille img { background: none; }
+  [data-theme="dark"] .card-alcool .pic { background: linear-gradient(180deg, #2A2621 0%, var(--surface) 100%); }
+  [data-theme="dark"] .identite .verre, [data-theme="dark"] .tb-verre { background: var(--paper); color: #1D1B18; }
+  [data-theme="dark"] .identite .verre small, [data-theme="dark"] .identite .verre span { color: #1D1B18; }
+  [data-theme="dark"] .topbar { border-bottom-color: var(--line); }
+  [data-theme="dark"] .bubble { border-color: var(--line); }
+  [data-theme="dark"] .search input, [data-theme="dark"] .lex-search, [data-theme="dark"] .cout input, [data-theme="dark"] .calc input, [data-theme="dark"] .outil-choix select { color: var(--ink); background: var(--bg); }
+  [data-theme="dark"] .cout-total .coef input { background: var(--surface); }
+  [data-theme="dark"] .three-s div, [data-theme="dark"] .formula, [data-theme="dark"] .identite, [data-theme="dark"] .cta-dark, [data-theme="dark"] .tb-id, [data-theme="dark"] .cout-total { border: 1px solid var(--line); }
+  [data-theme="dark"] img[src*="img/verres/"], [data-theme="dark"] img[src*="img/materiel/"] { background: var(--paper); border-radius: 10px; }
+  [data-theme="dark"] .glass img { padding: 4px; }
+  [data-theme="dark"] .carte-autre img, [data-theme="dark"] .voir-grid img, [data-theme="dark"] .cta-bouteilles img { filter: drop-shadow(0 2px 6px rgba(0,0,0,.4)); }
+
 
 /* ---------- Transitions douces entre les pages ---------- */
 #app.entree > * { animation: entree .32s cubic-bezier(.2,.7,.2,1) both; }
@@ -720,9 +720,24 @@ a.cta-autres:hover, a.cta-autres:focus-visible { transform: translateY(-2px); bo
   .entr-q { padding: 18px 14px; }
   .entr-retour .btn-go { margin-left: 0; width: 100%; }
 }
-@media (prefers-color-scheme: dark) {
-  .entr-img, .entr-erreurs img { mix-blend-mode: normal; background: var(--paper); }
-  .entr-choix button.bon { background: #1F3A23; color: #CDEBD1; }
-  .entr-choix button.faux { background: #45221A; color: #F4CFC4; }
-}
+/* thème sombre */
+  [data-theme="dark"] .entr-img, [data-theme="dark"] .entr-erreurs img { mix-blend-mode: normal; background: var(--paper); }
+  [data-theme="dark"] .entr-choix button.bon { background: #1F3A23; color: #CDEBD1; }
+  [data-theme="dark"] .entr-choix button.faux { background: #45221A; color: #F4CFC4; }
+
 @media (prefers-reduced-motion: reduce) { .entr-q, .entr-retour { animation: none; } .entr-barre span { transition: none; } }
+
+/* ---------- Bouton de thème (Auto / Clair / Sombre) ---------- */
+.theme-btn { grid-area: theme; justify-self: end; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px 0 11px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: border-color .15s; }
+.theme-btn:hover { border-color: var(--gold); }
+.theme-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.theme-btn .ti { display: none; color: var(--gold-ink); flex: none; }
+[data-choix="auto"] .theme-btn .ti-auto, [data-choix="clair"] .theme-btn .ti-clair, [data-choix="sombre"] .theme-btn .ti-sombre { display: block; }
+html:not([data-choix]) .theme-btn .ti-auto { display: block; }
+.topbar .wrap { grid-template-areas: "brand nav theme" "search nav theme"; grid-template-columns: minmax(0, 440px) 1fr auto; }
+@media (min-width: 821px) { .topbar .wrap { grid-template-columns: 400px 1fr auto; } }
+@media (max-width: 820px) {
+  .topbar .wrap { grid-template-columns: 1fr auto; grid-template-areas: "brand theme" "search search" "nav nav"; }
+}
+@media (max-width: 380px) { .theme-btn { padding: 0 10px; } .theme-btn .theme-l { display: none; } }
+@media print { .theme-btn { display: none; } }
