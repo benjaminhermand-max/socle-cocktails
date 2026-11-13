@@ -115,6 +115,9 @@
   <script src="data/emblemes.js?v=36"></script>
   <script src="data/autres.js?v=36"></script>
   <script src="app.js?v=36"></script>
-  <script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js"); }); }</script>
+  <script>if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js"); }); }
+// Demande au téléphone de garder la mémoire de l'appli (progression, favoris…)
+// à l'abri du ménage automatique quand l'espace manque.
+if (navigator.storage && navigator.storage.persist) { navigator.storage.persisted().then(function (ok) { if (!ok) navigator.storage.persist(); }).catch(function () {}); }</script>
 </body>
 </html>
